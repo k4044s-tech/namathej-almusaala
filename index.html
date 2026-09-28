@@ -12,6 +12,21 @@
 <meta name="apple-mobile-web-app-title" content="نماذج المساءلة">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>نماذج المساءلة والإجراءات</title>
+<meta name="description" content="أداة مجانية لطباعة نماذج المساءلة: مساءلة غياب، مساءلة تأخر وانصراف، قرار حسم، وبيان الإجراء على دقائق التأخير.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="نماذج المساءلة">
+<meta property="og:locale" content="ar_SA">
+<meta property="og:url" content="https://k4044s-tech.github.io/namathej-almusaala/">
+<meta property="og:title" content="نماذج المساءلة والإجراءات">
+<meta property="og:description" content="مساءلة غياب، تأخر وانصراف، قرار حسم، بيان الإجراء. أدخل البيانات واطبع أو احفظ PDF مباشرة.">
+<meta property="og:image" content="https://k4044s-tech.github.io/namathej-almusaala/icons/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="نماذج المساءلة والإجراءات">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="نماذج المساءلة والإجراءات">
+<meta name="twitter:description" content="مساءلة غياب، تأخر وانصراف، قرار حسم، بيان الإجراء.">
+<meta name="twitter:image" content="https://k4044s-tech.github.io/namathej-almusaala/icons/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
@@ -57,6 +72,9 @@ label.f{display:block;margin-bottom:10px;font-size:12.5px;color:var(--muted)}
 label.f>input,label.f>select,label.f>textarea{display:block;width:100%;margin-top:3px;min-height:42px;padding:8px 10px;border:1px solid #b9c6c3;border-radius:6px;background:#fff;font-size:15px;color:var(--ink)}
 label.f>input:focus,label.f>select:focus,label.f>textarea:focus{border-color:var(--teal)}
 label.f.auto>input{background:#f6faf9}
+label.f>select{-webkit-appearance:none;appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231d7367' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat left 12px center;padding-left:34px}
+label.f>input[type=date],label.f>input[type=time]{-webkit-appearance:none;appearance:none;text-align:right}
+.g2{align-items:end}
 .hint{font-size:12px;color:var(--muted);margin:-4px 0 10px}
 .panel .opt{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:8px}
 .panel .opt>label.chk{display:flex;gap:8px;align-items:center;font-weight:500;cursor:pointer;min-height:28px}
@@ -106,6 +124,25 @@ textarea.bulk{width:100%;min-height:90px;border:1px solid #b9c6c3;border-radius:
   .notice p{flex-basis:calc(100% - 40px)}
   .notice-act{width:100%}
   .notice-act .btn{flex:1}
+}
+/* الجوال: خط أكبر وخانات بارتفاع موحّد */
+@media (max-width:900px){
+  body{font-size:16px}
+  legend{font-size:16.5px}
+  .g2{gap:12px}
+  label.f{font-size:15px;margin-bottom:14px}
+  label.f>input,label.f>select,label.f>textarea{height:52px;min-height:52px;font-size:17px;padding:10px 12px;margin-top:5px;box-sizing:border-box}
+  label.f>textarea{height:auto;min-height:110px}
+  label.f>select{padding-left:36px}
+  .hint{font-size:13.5px}
+  .seg label{font-size:16.5px;min-height:48px;padding:11px}
+  label.chk2{font-size:15.5px}
+  .panel .opt>label.chk{font-size:16px}
+  .picker button b{font-size:15.5px}
+  .picker button span{font-size:13px}
+  .picker .pgroup{font-size:14px}
+  .btn{font-size:15.5px;min-height:48px}
+  .tlist{font-size:15px}
 }
 label.chk2{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:0 0 8px;cursor:pointer;min-height:28px}
 label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
