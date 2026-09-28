@@ -1,0 +1,17 @@
+{
+  "name": "نماذج المساءلة والإجراءات",
+  "short_name": "نماذج المساءلة",
+  "description": "طباعة نماذج المساءلة وقرارات الحسم وبيان الإجراء",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e8edec",
+  "theme_color": "#2b9e8f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
