@@ -100,8 +100,29 @@ textarea.bulk{width:100%;min-height:90px;border:1px solid #b9c6c3;border-radius:
 .bar .who{font-size:13px;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar .who b{color:var(--ink)}
 .bar .btn-row{flex:0 0 auto}
-.toast{position:fixed;inset-inline:0;bottom:calc(84px + env(safe-area-inset-bottom));margin:auto;width:max-content;max-width:90vw;background:#16211f;color:#fff;padding:8px 14px;border-radius:6px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:6}
-.toast.on{opacity:1}
+.toast{position:fixed;inset-inline:0;bottom:calc(84px + env(safe-area-inset-bottom));margin:auto;width:max-content;max-width:min(460px,92vw);display:flex;align-items:center;gap:10px;background:#fff;color:var(--ink);padding:10px 16px 10px 14px;border-radius:12px;border:1px solid var(--line);border-inline-start:4px solid var(--tc,#15803d);box-shadow:0 10px 30px rgba(16,33,31,.18);font-size:14px;line-height:1.55;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s;z-index:50}
+.toast .t-ic{width:24px;height:24px;border-radius:50%;background:var(--tc,#15803d);color:#fff;display:grid;place-items:center;flex:0 0 auto;font-size:13px;font-weight:800}
+.toast.ok{--tc:#15803d} .toast.warn{--tc:#d97706} .toast.err{--tc:#dc2626} .toast.info{--tc:#2563eb}
+body.logview .toast{bottom:calc(24px + env(safe-area-inset-bottom))}
+.toast.on{opacity:1;transform:none}
+.ask{border:0;border-radius:18px;padding:26px 26px 20px;width:min(430px,calc(100vw - 32px));box-shadow:0 24px 70px rgba(10,30,26,.32);text-align:center;color:var(--ink)}
+.ask::backdrop{background:rgba(16,33,31,.5);backdrop-filter:blur(2px)}
+.ask[open]{animation:askIn .18s ease-out}
+@keyframes askIn{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.ask-ic{width:56px;height:56px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;background:var(--ab);color:var(--ac)}
+.ask-ic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ask.primary{--ac:#1d7367;--ab:#e6f3f1} .ask.danger{--ac:#dc2626;--ab:#fee2e2} .ask.warn{--ac:#d97706;--ab:#fef3c7}
+.ask h2{margin:0 0 6px;font-size:18px}
+.ask-msg{font-size:14.5px;line-height:1.75;color:#4b5563}
+.ask-msg b{color:var(--ink)}
+.ask-msg .note{display:block;margin-top:10px;padding:8px 12px;border-radius:8px;background:#f4f7f6;font-size:13px;color:#4b5563;text-align:start}
+.ask-btns{display:flex;gap:10px;margin-top:20px}
+.ask-btns button{flex:1;min-height:46px;border-radius:10px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;border:1px solid transparent}
+.ask-ok{background:var(--ac);color:#fff}
+.ask-ok:hover{filter:brightness(1.08)}
+.ask-no{background:#fff;border-color:#d4dcda!important;color:var(--ink)}
+.ask-no:hover{background:#f4f7f6}
+.ask-btns button:focus-visible{outline:3px solid var(--ab);outline-offset:2px}
 .credit{text-align:center;font-size:12px;line-height:1.8;color:var(--muted);padding:6px 0 0}
 
 .seg{display:flex;border:1px solid #b9c6c3;border-radius:6px;overflow:hidden;margin-bottom:12px}
@@ -364,7 +385,8 @@ table.lt select.f-perm.no{border-color:#fca5a5;background:#fef2f2;color:#b91c1c}
 .acf{display:grid;grid-template-columns:repeat(3,minmax(0,200px)) 1fr;gap:12px;align-items:end;margin-bottom:6px}
 .acf .f{margin-bottom:0}
 .acf select{display:block;width:100%;margin-top:3px;min-height:42px;padding:8px 10px;border:1px solid #b9c6c3;border-radius:6px;background:#fff;font:inherit;font-size:15px}
-.acb{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.acb{display:flex;gap:8px;justify-content:flex-end;align-items:flex-end;flex-wrap:nowrap}
+.acb .btn{min-height:42px;white-space:nowrap}
 #ac-period{margin:6px 0 12px}
 .ladder{display:flex;gap:4px;align-items:center}
 .ladder-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid #e4e4e7;background:#fafafa;color:#a1a1aa;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0;font-family:inherit;cursor:default;flex:0 0 auto}
@@ -449,7 +471,7 @@ button.ladder-dot:hover{transform:scale(1.12)}
 
 /* الإعدادات */
 .log-narrow{max-width:1040px}
-.side .nav-set{margin-top:auto}
+.side .nav-set{margin-top:0}
 .setlink{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#f4f7f6;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-size:13px;color:var(--muted)}
 .setlink b{color:var(--ink)}
 .setlink.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
@@ -490,9 +512,84 @@ details.paste[open] summary{margin-bottom:8px}
   .term-row .f:first-child{grid-column:1/-1}
 }
 
+/* التحليلات */
+.an-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.an-filter{display:flex;gap:10px}
+.an-filter .f{margin:0;min-width:150px}
+.an-sec{display:flex;align-items:baseline;gap:10px;margin:22px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.an-sec b{font-size:17px}
+.an-sec span{font-size:13px;color:var(--muted)}
+.an-grid{display:grid;gap:16px;margin-bottom:16px;align-items:stretch}
+.an-grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.an-grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.an-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0}
+.an-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.an-h h3{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
+.an-h span{font-size:12.5px;color:var(--muted)}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%}
+.an-svg{display:block;width:100%;height:auto;font-family:var(--font)}
+.an-empty{color:var(--muted);text-align:center;padding:30px 0;margin:0}
+.an-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-top:6px}
+.an-legend div{display:flex;align-items:center;gap:8px;font-size:13.5px}
+.an-legend span{flex:1;display:flex;align-items:center;gap:7px}
+.an-legend i{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.an-legend b{font-variant-numeric:tabular-nums}
+.an-legend small{color:var(--muted);width:34px;text-align:end}
+.an-lg2{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:13px;margin-top:8px}
+.an-lg2 span{display:flex;align-items:center;gap:6px}
+.an-lg2 i{width:11px;height:11px;border-radius:3px}
+.wk-row{display:grid;grid-template-columns:92px 1fr 42px;align-items:center;gap:10px;margin:10px 0}
+.wk-d{font-size:14px;display:flex;align-items:center;gap:6px}
+.wk-d em{font-style:normal;font-size:11px;font-weight:700;background:#dc2626;color:#fff;border-radius:999px;padding:0 8px}
+.wk-bar{height:12px;background:#f1f3f4;border-radius:999px;overflow:hidden;display:flex}
+.wk-bar>span{display:flex;height:100%;border-radius:999px;overflow:hidden}
+.wk-bar i{display:block;height:100%}
+.wk-row b{font-variant-numeric:tabular-nums;text-align:start}
+.wk-row b.hi{color:#dc2626}
+.an-foot{font-size:13px;color:var(--muted);margin:12px 0 0}
+.an-foot b{color:var(--ink);font-size:15px}
+.sv-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:4px 0 14px}
+.sv-bar i{display:block}
+.sv-boxes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sv-box{border:1px solid var(--line);border-top:3px solid var(--c);border-radius:10px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.sv-box span{font-size:13px;color:var(--muted)}
+.sv-box b{font-size:26px;line-height:1.2}
+.sv-box em{font-style:normal;font-size:12px;font-weight:700;color:var(--c)}
+.sv-box small{font-size:11.5px;color:var(--muted)}
+.rs-row{display:grid;grid-template-columns:minmax(0,120px) 1fr 30px 34px;align-items:center;gap:10px;margin:10px 0;font-size:13.5px}
+.rs-k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rs-k.unc{color:#db2777;font-weight:700}
+.rs-bar{height:10px;background:#f1f3f4;border-radius:999px;overflow:hidden}
+.rs-bar i{display:block;height:100%;border-radius:999px;margin-inline-start:auto}
+.rs-row b{font-variant-numeric:tabular-nums}
+.rs-row small{color:var(--muted);font-size:11.5px}
+.an-link{display:inline-block;margin-top:8px;color:#db2777;font-weight:700;font-size:13.5px}
+ol.tp{list-style:none;margin:0;padding:0}
+ol.tp li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eef1f0}
+ol.tp li:last-child{border-bottom:0}
+.tp-r{width:26px;height:26px;border-radius:50%;background:#f1f3f4;display:grid;place-items:center;font-size:13px;flex:0 0 auto}
+.tp-n{flex:1;text-align:start;background:none;border:0;padding:0;font:inherit;font-size:14.5px;color:var(--ink);cursor:pointer}
+.tp-n:hover{color:var(--teal-deep);text-decoration:underline}
+ol.tp b{color:#dc2626;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media (max-width:1100px){ .an-grid.g3{grid-template-columns:1fr 1fr} }
+@media (max-width:600px){ .an-legend{grid-template-columns:1fr} }
+@media (max-width:430px){ .side .nav{font-size:12px} }
+@media (max-width:900px){ .an-grid.g2,.an-grid.g3{grid-template-columns:minmax(0,1fr)} .an-filter{width:100%} .an-filter .f{flex:1;min-width:0} }
+
+.side-credit{margin:18px 6px 0;padding:14px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.6;color:#374151}
+.side-credit b{font-size:14.5px;color:var(--teal-deep)}
+.side-credit bdi{font-weight:700;color:var(--ink)}
+.credit b{color:var(--teal-deep);font-size:14px}
+.credit bdi{font-weight:700;color:var(--ink)}
+@media (max-width:900px){ .side-credit{display:none} }
+
 /* نافذة التنبيه */
 .dlg{border:0;border-radius:14px;padding:20px 22px;width:min(520px,calc(100vw - 32px));box-shadow:0 20px 60px rgba(10,30,26,.3);color:var(--ink)}
-.dlg::backdrop{background:rgba(16,33,31,.45)}
+.dlg::backdrop{background:rgba(16,33,31,.5);backdrop-filter:blur(2px)}
+.dlg{border-radius:18px!important;padding:24px 24px 18px!important}
+.due-ic{width:52px;height:52px;border-radius:50%;background:#fee2e2;color:#dc2626;display:grid;place-items:center;margin-bottom:10px}
+.due-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#dlg-due .btn-row .btn{min-height:44px;min-width:110px;border-radius:10px}
 .dlg h2{margin:0 0 4px;font-size:18px;color:var(--bad)}
 .dlg .btn-row{justify-content:flex-start;margin-top:12px}
 
@@ -578,6 +675,10 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
     <span>الإجراءات</span>
     <b class="badge" id="nav-badge2" hidden></b>
   </a>
+  <a href="#analytics" class="nav" data-view="analytics">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+    <span><span class="lg-only">التحليلات</span><span class="sm-only">تحليل</span></span>
+  </a>
   <a href="#reports" class="nav" data-view="reports">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
     <span>التقارير</span>
@@ -586,6 +687,11 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
     <span class="lg-only">الإعدادات</span>
   </a>
+  <div class="side-credit">
+    <b>نسخة مجانية، لا تُباع</b>
+    <span>جميع الحقوق محفوظة لـ <bdi dir="ltr">@K4044S</bdi></span>
+    <span>الدعم الفني: <bdi dir="ltr">@K4044S</bdi></span>
+  </div>
 </nav>
 <div class="views">
 <div class="view" id="view-entry">
@@ -712,7 +818,7 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
       </div>
     </details>
       
-    <p class="credit">© جميع الحقوق محفوظة لخالد ابراهيم سك<br>نسخة مجانية، لا تُباع</p>
+    <p class="credit"><b>نسخة مجانية، لا تُباع</b><br>جميع الحقوق محفوظة لـ <bdi dir="ltr">@K4044S</bdi><br>الدعم الفني: <bdi dir="ltr">@K4044S</bdi></p>
   </section>
 
   <section class="desk" aria-label="المعاينة">
@@ -736,11 +842,10 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
       </div>
       <div class="chips" id="lf-presets">
         <span class="chips-cap">فترات جاهزة:</span>
+        <button type="button" data-p="all">الكل</button>
         <button type="button" data-p="week">هذا الأسبوع</button>
         <button type="button" data-p="month">هذا الشهر</button>
         <button type="button" data-p="last">الشهر الماضي</button>
-        <button type="button" data-p="period">فترة الاحتساب</button>
-        <button type="button" data-p="all">الكل</button>
       </div>
     </section>
 
@@ -811,14 +916,15 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
         <label class="f">من تاريخ<input type="date" id="ac-from"></label>
         <label class="f">إلى تاريخ<input type="date" id="ac-to"></label>
         <label class="f">الموظف<select id="ac-emp"><option value="">جميع الموظفين</option></select></label>
-        <div class="chips rp-quick" id="ac-quick">
-          <button type="button" data-p="month">هذا الشهر</button>
-          <button type="button" data-p="period">فترة الاحتساب</button>
-          <button type="button" data-p="all">الكل</button>
-        </div>
         <div class="acb">
           <button type="button" class="btn" id="ac-print">طباعة الكشف</button>
           <button type="button" class="btn" id="ac-csv">تصدير Excel</button>
+        </div>
+        <div class="chips rp-quick" id="ac-quick">
+          <button type="button" data-p="all">الكل</button>
+          <button type="button" data-p="week">هذا الأسبوع</button>
+          <button type="button" data-p="month">هذا الشهر</button>
+          <button type="button" data-p="last">الشهر الماضي</button>
         </div>
       </div>
       <p class="hint" id="ac-period"></p>
@@ -845,6 +951,46 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
     </section>
   </div>
 </div>
+<div class="view view-log" id="view-analytics" hidden>
+  <div class="log">
+    <div class="log-head">
+      <h2>التحليلات</h2>
+      <p>صورة شاملة للمخالفات في الفترة المختارة: أنواعها، وأيام تكرارها، وأسبابها، والموظفون الأكثر فيها.</p>
+    </div>
+    <section class="card">
+      <div class="filt">
+        <label class="f">من تاريخ<input type="date" id="an-from"></label>
+        <label class="f">إلى تاريخ<input type="date" id="an-to"></label>
+      </div>
+      <div class="chips" id="an-quick" style="margin-top:12px">
+        <span class="chips-cap">فترات جاهزة:</span>
+        <button type="button" data-p="all">الكل</button>
+        <button type="button" data-p="week">هذا الأسبوع</button>
+        <button type="button" data-p="month">هذا الشهر</button>
+        <button type="button" data-p="last">الشهر الماضي</button>
+      </div>
+    </section>
+
+    <div class="an-sec"><b>المخالفات</b><span>ما نوعها، ومتى تكثر، ولماذا</span></div>
+    <div class="an-grid g2">
+      <section class="an-card"><div class="an-h"><h3>ملخص المخالفات</h3><span>نسبة كل نوع من حالات الفترة</span></div><div id="an-donut"></div></section>
+      <section class="an-card"><div class="an-h"><h3>التأخر مقابل الانصراف المبكر</h3><span id="an-bars-sub"></span></div><div id="an-bars"></div></section>
+    </div>
+    <div class="an-grid g3">
+      <section class="an-card"><div class="an-h"><h3>نمط أيام الأسبوع</h3><span>متوسط الحالات في اليوم الواحد لكل يوم عمل</span></div><div id="an-week"></div></section>
+      <section class="an-card"><div class="an-h"><h3>شدة التأخر</h3></div><div id="an-sev"></div></section>
+      <section class="an-card"><div class="an-h"><h3>أسباب الغياب</h3></div><div id="an-reasons"></div></section>
+    </div>
+
+    <div class="an-sec"><b>الموظفون</b><span>انقر أي اسم لطباعة تقريره</span></div>
+    <div class="an-grid g3">
+      <section class="an-card"><div class="an-h"><h3><i class="dot" style="background:#ef4444"></i>الأكثر غياباً</h3></div><div id="an-top-abs"></div></section>
+      <section class="an-card"><div class="an-h"><h3><i class="dot" style="background:#f97316"></i>الأكثر تأخراً</h3></div><div id="an-top-late"></div></section>
+      <section class="an-card"><div class="an-h"><h3><i class="dot" style="background:#eab308"></i>الأكثر انصرافاً مبكراً</h3></div><div id="an-top-early"></div></section>
+    </div>
+  </div>
+</div>
+
 <div class="view view-log" id="view-reports" hidden>
   <div class="log">
     <div class="log-head">
@@ -871,11 +1017,10 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
         <label class="f">إلى تاريخ<input type="date" id="rp-to"></label>
         <label class="f">الموظف<select id="rp-emp"><option value="">جميع الموظفين</option></select></label>
         <div class="chips rp-quick" id="rp-quick">
+          <button type="button" data-p="all">الكل</button>
           <button type="button" data-p="week">هذا الأسبوع</button>
           <button type="button" data-p="month">هذا الشهر</button>
           <button type="button" data-p="last">الشهر الماضي</button>
-          <button type="button" data-p="period">فترة الاحتساب</button>
-          <button type="button" data-p="all">الكل</button>
         </div>
       </div>
       <p class="rp-sum" id="rp-sum"></p>
@@ -1013,7 +1158,7 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
         <div class="f btn-row" style="margin:0"><button type="button" class="btn" id="btn-period-term">من بداية الفصل الحالي</button><button type="button" class="btn" id="btn-newperiod">بدء فترة جديدة من اليوم</button></div>
       </div>
       <label class="chk2"><input type="checkbox" data-k="set.countEarly"> احتساب الانصراف المبكر وعدم التواجد ضمن الدقائق</label>
-      <p class="hint">تُجمع دقائق كل موظف من هذا التاريخ، ويظهر تنبيه عند بلوغه حد إجراء (من ٣٠ دقيقة: تنبيه شفوي، حتى ١٦٨٠ دقيقة: الرفع للموارد البشرية). اتركه فارغاً ليُحتسب السجل كله، وابدأ فترة جديدة مع كل فصل دراسي.</p>
+      <p class="hint">تُجمع دقائق كل موظف من هذا التاريخ، ويظهر تنبيه عند بلوغه حد إجراء (من ٣٠ دقيقة: تنبيه شفوي، حتى ١٦٨٠ دقيقة: الرفع للموارد البشرية). اتركه فارغاً ليُحتسب من بداية العام الدراسي، أو ابدأ فترة جديدة مع كل فصل دراسي.</p>
     </section>
 
     <section class="card">
@@ -1026,7 +1171,7 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
       </div>
       <p class="hint" id="bk-info" style="margin-top:10px"></p>
     </section>
-    <p class="credit">© جميع الحقوق محفوظة لخالد ابراهيم سك<br>نسخة مجانية، لا تُباع</p>
+    <p class="credit"><b>نسخة مجانية، لا تُباع</b><br>جميع الحقوق محفوظة لـ <bdi dir="ltr">@K4044S</bdi><br>الدعم الفني: <bdi dir="ltr">@K4044S</bdi></p>
   </div>
 </div>
 
@@ -1062,6 +1207,7 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
 </dialog>
 
 <dialog class="dlg" id="dlg-due" aria-labelledby="dlg-title">
+  <div class="due-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg></div>
   <h2 id="dlg-title">وصل موظف إلى إجراء جديد</h2>
   <p class="hint">بلغ مجموع الدقائق حدّ الإجراء التالي. أصدر بيان الإجراء الآن أو لاحقاً من السجل.</p>
   <div id="dlg-list"></div>
@@ -1075,7 +1221,16 @@ label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
     <button type="button" class="btn" id="btn-blank">طباعة نموذج فارغ</button>
   </div>
 </div>
-<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="t-ic" id="toast-ic"></span><span id="toast-tx"></span></div>
+<dialog class="ask" id="dlg-ask" aria-labelledby="ask-title" aria-describedby="ask-msg">
+  <div class="ask-ic" id="ask-ic"></div>
+  <h2 id="ask-title"></h2>
+  <div class="ask-msg" id="ask-msg"></div>
+  <div class="ask-btns">
+    <button type="button" class="ask-ok" id="ask-ok"></button>
+    <button type="button" class="ask-no" id="ask-no"></button>
+  </div>
+</dialog>
 
 <script>
 (() => {
@@ -1457,7 +1612,59 @@ const DOC_CSS = `
 .doc .rp-sign{margin-top:5mm}
 .doc .rp-none{text-align:center;padding:12mm 0;font-size:11pt}
 .doc .rp-info td:nth-child(odd){background:#efefef;font-weight:700;white-space:nowrap}
+.doc .rp .title{margin-bottom:1.5mm}
+.doc .rp .rp-sub{display:table;margin:0 auto 4.5mm;padding:1mm 5mm;border:1px solid #cfd8dc;border-radius:10mm;background:#f6f9f9;font-size:9.5pt;color:#374151}
+.doc .rp .rp-sub .sep{color:#9aa0a6;margin:0 1.5mm}
+.doc .rp .rp-stats{gap:3mm;margin:0 0 4.5mm}
+.doc .rp .rp-stats>div{border:1px solid #d5dfdd;border-top:1.2mm solid #64748b;border-radius:2mm;background:#f8fbfa;padding:2mm 1.5mm 1.6mm}
+.doc .rp .rp-stats .bad{border-top-color:#dc2626} .doc .rp .rp-stats .good{border-top-color:#16a34a} .doc .rp .rp-stats .warn{border-top-color:#ea8a0c} .doc .rp .rp-stats .pur{border-top-color:#7c3aed}
+.doc .rp .rp-stats b{font-size:17pt;line-height:1.25}
+.doc .rp .rp-stats span{font-size:8.5pt;color:#4b5563}
+.doc .rp table.rt{font-size:9pt;margin:0 0 3.5mm}
+.doc .rp table.rt th{background:#1e9bf0;color:#fff;border:1px solid #1b86cf;padding:1.5mm 1mm;font-weight:700}
+.doc .rp table.rt td{border:1px solid #cfd8dc;padding:1.3mm 1.2mm}
+.doc .rp table.rt tbody tr:nth-child(even) td{background:#f5f7f8}
+.doc .rp table.rt tfoot td{background:#e3f2fd;border-color:#b6d9f5;color:#0b4a78}
+.doc .rp table.rt tbody tr.ok td{background:#ecfdf3} .doc .rp table.rt tbody tr.due td{background:#fff5e6} .doc .rp table.rt tbody tr.mute td{background:#fff;color:#9aa0a6}
+.doc .rp table.rt td.nm{font-weight:600}
+.doc .rp table.rp-info{margin-bottom:4mm}
+.doc .rp table.rp-info td{border-color:#cfd8dc;background:#fff!important;text-align:start;padding:1.6mm 2.5mm;font-size:10pt}
+.doc .rp table.rp-info td:nth-child(odd){background:#eef6f5!important;color:#1d4d47;font-weight:700;width:18%;white-space:nowrap}
+.doc .rp table.rp-info td:nth-child(even){font-weight:600;width:32%}
+.doc .rp .rp-h{color:#1d4d47;border-bottom:1px solid #b7ddd6}
+.doc .rp .rp-sign{margin-top:6mm}
+.doc .rp .rp-foot{display:flex;justify-content:space-between;margin-top:5mm;padding-top:1.5mm;border-top:1px solid #d5dfdd;font-size:8pt;color:#6b7280}
+.doc .rp .rp-none{border:1px dashed #cfd8dc;border-radius:2mm;color:#6b7280}
 .doc .c-late{background:#e8962e} .doc .c-dep{background:#7c3aed} .doc .c-exc{background:#16a34a} .doc .c-unx{background:#b91c1c} .doc .c-unc{background:#c4c8cf}
+.doc .mr .mr-t{font-size:22pt;font-weight:800;margin:0 0 2mm;text-align:start}
+.doc .mr .mr-sub{font-size:10.5pt;color:#444;margin:0 0 5mm;line-height:1.6}
+.doc .mr-charts{display:flex;gap:6mm;margin-bottom:4mm}
+.doc .mr-charts>div{flex:1;min-width:0}
+.doc .mr-charts h3{font-size:11.5pt;margin:0 0 1mm;text-align:center}
+.doc .an-svg{display:block;width:100%;height:auto;font-family:inherit}
+.doc .mr-lg{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm;font-size:9pt;margin-top:1mm}
+.doc .mr-lg div{display:flex;justify-content:space-between;align-items:center}
+.doc .mr-lg span{display:flex;align-items:center;gap:1.5mm}
+.doc .mr-lg i{display:inline-block;width:2.6mm;height:2.6mm;border-radius:50%}
+.doc .mr-lg b{text-align:start;line-height:1.2}
+.doc .mr-lg small{display:block;font-weight:400;color:#777;font-size:7.5pt}
+.doc .mr-lg2{display:flex;gap:6mm;justify-content:center;font-size:9pt;margin-top:1mm}
+.doc .mr-lg2 i{display:inline-block;width:3mm;height:3mm;border-radius:.6mm;margin-inline-end:1.5mm;vertical-align:-.4mm}
+.doc .mr-h{text-align:center;font-size:12pt;margin:2mm 0 2mm}
+.doc table.mr-tb{width:100%;border-collapse:collapse;font-size:9.5pt}
+.doc table.mr-tb thead{display:table-header-group}
+.doc table.mr-tb th{background:#1e9bf0;color:#fff;border:1px solid #1b86cf;padding:1.4mm 1mm;font-weight:700;line-height:1.3}
+.doc table.mr-tb th small{display:block;font-weight:400;font-size:7.5pt;opacity:.9}
+.doc table.mr-tb td{border:1px solid #cfd8dc;padding:1.3mm 1.2mm;text-align:center}
+.doc table.mr-tb tr{break-inside:avoid}
+.doc table.mr-tb tbody tr:nth-child(even) td{background:#f5f7f8}
+.doc table.mr-tb td.nm{text-align:start}
+.doc table.mr-tb td.wd{background:#fff8e1!important;font-weight:700}
+.doc table.mr-tb td.z{color:#9aa0a6}
+.doc table.mr-tb td.bad{color:#dc2626;font-weight:700}
+.doc .pc{display:inline-flex;align-items:center;gap:1.5mm;font-weight:700}
+.doc .pc i{display:inline-block;height:1.6mm;background:#22c55e;border-radius:1mm}
+.doc .mr-note{font-size:8pt;color:#666;margin-top:2mm}
 .doc .c-s1{background:#8fc9a8} .doc .c-s2{background:#e8962e} .doc .c-s3{background:#d34a3c}
 `;
 const PRINT_CSS = `
@@ -1622,7 +1829,39 @@ $('#btn-to-deduct').addEventListener('click', () => {
   S.form = 'deduct'; store.set('hf.form', S.form);
   syncInputs(); render(); toast('نُقلت الدقائق إلى قرار الحسم');
 });
-function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 2200); }
+// إشعار قصير بلون حسب نوعه (يُستنتج من النص إن لم يُحدَّد)
+function toast(t, type) {
+  const el = $('#toast');
+  const k = type || (/^(لم |لا |تعذّر|تعذر|هذا الملف)/.test(t) ? 'err' : /^(اختر|أدخل|حدّد|اكتب|اضغط|لصق|راجع)/.test(t) ? 'warn' : 'ok');
+  el.className = 'toast ' + k;
+  $('#toast-ic').textContent = { ok: '✓', warn: '!', err: '✕', info: 'i' }[k];
+  $('#toast-tx').textContent = t;
+  void el.offsetWidth; el.classList.add('on');
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), k === 'ok' ? 2400 : 3600);
+}
+// نافذة تأكيد بديلة عن confirm() — تُرجع وعداً بقيمة true/false
+const ASK_IC = {
+  danger: '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>',
+  warn: '<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg>',
+  primary: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>',
+};
+function ask({ title, msg = '', note = '', ok = 'تأكيد', cancel = 'إلغاء', tone = 'primary' }) {
+  return new Promise((resolve) => {
+    const d = $('#dlg-ask');
+    d.className = 'ask ' + tone;
+    $('#ask-ic').innerHTML = ASK_IC[tone] || ASK_IC.primary;
+    $('#ask-title').textContent = title;
+    $('#ask-msg').innerHTML = msg + (note ? `<span class="note">${note}</span>` : '');
+    $('#ask-ok').textContent = ok; $('#ask-no').textContent = cancel;
+    const done = (v) => { d.removeEventListener('close', onClose); $('#ask-ok').onclick = null; $('#ask-no').onclick = null; if (d.open) d.close(); resolve(v); };
+    const onClose = () => done(false);
+    $('#ask-ok').onclick = () => done(true);
+    $('#ask-no').onclick = () => done(false);
+    d.addEventListener('close', onClose);
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+    setTimeout(() => (tone === 'danger' ? $('#ask-no') : $('#ask-ok')).focus(), 30);
+  });
+}
 $('#in-name').addEventListener('change', () => {
   const t = teachers.find((x) => x.name === S.emp.name);
   if (!t) return;
@@ -1704,7 +1943,8 @@ function printPages(html, t) {
 const empKey = (e) => ((e && (e.civil || e.name)) || '').trim();
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const saveLog = () => { store.set('hf.log', LOG); store.set('hf.issued', ISSUED); store.set('hf.raised', RAISED); };
-const inPeriod = (date) => !S.set.periodFrom || date >= S.set.periodFrom;
+const periodStart = () => S.set.periodFrom || S.set.yearStart || '';
+const inPeriod = (date) => !periodStart() || date >= periodStart();
 const actMins = (r) => r.perm === 'مقبول' ? 0 : (r.lateMins || 0) + (S.set.countEarly !== false ? (r.goneMins || 0) + (r.earlyMins || 0) : 0);
 const hm = (m) => hoursText(Math.round(m));
 
@@ -1778,7 +2018,7 @@ function buildTotals(from, to) {
   });
   return map;
 }
-const periodTotals = () => buildTotals(S.set.periodFrom || '', '');
+const periodTotals = () => buildTotals(periodStart(), '');
 const dueList = () => [...periodTotals().values()].filter((e) => e.pending).sort((a, c) => c.mins - a.mins);
 
 function afterPrint(mode) {
@@ -1827,7 +2067,7 @@ function issueFor(key) {
   if (!e) return;
   S.form = 'tier'; store.set('hf.form', S.form);
   S.emp = { name: '', civil: '', spec: '', level: '', jobno: '', job: S.emp.job, ...e.emp };
-  S.tr = { from: S.set.periodFrom || e.first, to: e.last, minutes: String(e.mins), tier: e.due != null ? String(e.due) : '' };
+  S.tr = { from: periodStart() || e.first, to: e.last, minutes: String(e.mins), tier: e.due != null ? String(e.due) : '' };
   S.doc.date = todayISO();
   closeDue(); go('entry'); renderJobs(); syncInputs(); render();
   toast(e.due != null ? `راجع بيان الإجراء «${TIERS[e.due].act}» ثم اطبعه` : 'راجع بيان الإجراء ثم اطبعه');
@@ -1876,13 +2116,16 @@ const daysAgo = (iso) => Math.max(0, Math.round((parseISO(todayISO()) - parseISO
 const ageTxt = (iso) => { const a = daysAgo(iso); return a === 0 ? 'اليوم' : a === 1 ? 'منذ يوم' : a === 2 ? 'منذ يومين' : `منذ ${a} ${a <= 10 ? 'أيام' : 'يوماً'}`; };
 function presetRange(p) {
   const t = new Date();
+  // بداية افتراضية: بداية العام الدراسي، وإن لم تُحدَّد فأقدم تاريخ في السجل
+  const firstDate = () => LOG.reduce((m, r) => (!m || r.date < m ? r.date : m), '');
+  const yearFrom = () => S.set.yearStart || firstDate() || todayISO();
   if (p === 'week') { const a = new Date(t); a.setDate(t.getDate() - t.getDay()); const z = new Date(a); z.setDate(a.getDate() + 6); return [isoOf(a), isoOf(z)]; }
   if (p === 'month') return [isoOf(new Date(t.getFullYear(), t.getMonth(), 1)), isoOf(new Date(t.getFullYear(), t.getMonth() + 1, 0))];
   if (p === 'last') return [isoOf(new Date(t.getFullYear(), t.getMonth() - 1, 1)), isoOf(new Date(t.getFullYear(), t.getMonth(), 0))];
-  if (p === 'period') return [S.set.periodFrom || '', ''];
-  if (p === 'year') return [S.set.yearStart || '', ''];
-  if (p && p.startsWith('term:')) { const x = (S.set.terms || [])[Number(p.slice(5))]; return x ? [x.from || '', x.to || ''] : ['', '']; }
-  return ['', ''];
+  if (p === 'period') return [S.set.periodFrom || yearFrom(), todayISO()];
+  if (p === 'year' || p === 'all') return [yearFrom(), todayISO()];
+  if (p && p.startsWith('term:')) { const x = (S.set.terms || [])[Number(p.slice(5))]; return x ? [x.from || yearFrom(), x.to || todayISO()] : [yearFrom(), todayISO()]; }
+  return [yearFrom(), todayISO()];
 }
 const hasLate = (r) => r.form === 'latedep' && (r.lateMins || 0) > 0;
 const hasEarly = (r) => r.form === 'latedep' && !!(r.data && r.data.dev && (r.data.dev.goneOn || r.data.dev.earlyOn));
@@ -1913,6 +2156,7 @@ function chips(list, cur) {
 }
 
 function renderLog() {
+  if (!LF.init) { LF.init = true; [LF.from, LF.to] = presetRange('all'); LF.preset = 'all'; }
   $('#lf-from').value = LF.from; $('#lf-to').value = LF.to;
   if ($('#lf-q').value !== LF.q) $('#lf-q').value = LF.q;
   injectTerms('#lf-presets');
@@ -2150,7 +2394,7 @@ function recordState(r) {
   else D.dev = { ...S.dev, ...r.data.dev };
   return D;
 }
-$('#lt').addEventListener('click', (e) => {
+$('#lt').addEventListener('click', async (e) => {
   const tr = e.target.closest('tr[data-id]'); if (!tr) return;
   const r = LOG.find((x) => x.id === tr.dataset.id); if (!r) return;
   const seg = e.target.closest('.cseg button');
@@ -2167,7 +2411,7 @@ $('#lt').addEventListener('click', (e) => {
     go('entry'); renderJobs(); syncInputs(); render();
     toast('فُتحت المساءلة للتعديل، والطباعة تحدّث السجل');
   } else if (b.dataset.r === 'del') {
-    if (!confirm(`حذف ${NAMES[r.form]} للموظف ${r.emp.name || ''} بتاريخ ${dmy(r.date)} من السجل؟`)) return;
+    if (!(await ask({ tone: 'danger', title: 'حذف من السجل', msg: `سيُحذف <b>${esc(NAMES[r.form])}</b> للموظف <b>${esc(r.emp.name || '')}</b> بتاريخ <b>${dmy(r.date)}</b>.`, note: 'تُعاد حسابات الإجراءات والتقارير بدونه، ولا يمكن التراجع.', ok: 'حذف' }))) return;
     LOG = LOG.filter((x) => x.id !== r.id); SEL.delete(r.id); saveLog(); updateBadge(); renderLog(); toast('حُذف من السجل');
   }
 });
@@ -2213,16 +2457,16 @@ $('#btn-csv').addEventListener('click', () => {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 });
-$('#btn-newperiod').addEventListener('click', () => {
-  if (!confirm('ستبدأ فترة احتساب جديدة من اليوم، وتُصفَّر مجاميع الإجراءات (يبقى السجل القديم محفوظاً). متابعة؟')) return;
+$('#btn-newperiod').addEventListener('click', async () => {
+  if (!(await ask({ tone: 'warn', title: 'بدء فترة احتساب جديدة', msg: `ستبدأ فترة الاحتساب من اليوم <b>${dmy(todayISO())}</b>، وتُصفَّر مجاميع الدقائق والإجراءات المستحقة.`, note: 'السجل القديم يبقى محفوظاً ويظهر في التقارير.', ok: 'بدء فترة جديدة' }))) return;
   S.set.periodFrom = todayISO(); store.set('hf.set', S.set); syncInputs(); updateBadge(); renderLog(); toast('بدأت فترة احتساب جديدة');
 });
 
 // ================= تبويب الإجراءات =================
-const AC = { from: null, to: '', emp: '', preset: 'period' };
+const AC = { from: null, to: '', emp: '', preset: 'all' };
 const daysWord = (n) => (n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? `${n} أيام` : `${n} يوماً`);
 function acList() {
-  if (AC.from == null) AC.from = S.set.periodFrom || '';
+  if (AC.from == null) { [AC.from, AC.to] = presetRange('all'); AC.preset = 'all'; }
   const tot = buildTotals(AC.from, AC.to);
   return [...tot.values()].filter((e) => (!AC.emp || e.key === AC.emp)).sort((a, b) => b.mins - a.mins);
 }
@@ -2237,14 +2481,14 @@ function ladderHTML(e) {
   }).join('')}</div>`;
 }
 function renderActions() {
-  if (AC.from == null) AC.from = S.set.periodFrom || '';
+  if (AC.from == null) { [AC.from, AC.to] = presetRange('all'); AC.preset = 'all'; }
   $('#ac-from').value = AC.from; $('#ac-to').value = AC.to;
   injectTerms('#ac-quick');
   $$('#ac-quick button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === AC.preset)));
   const all = buildTotals(AC.from, AC.to);
   const opts = [...all.values()].sort((a, b) => (a.emp.name || '').localeCompare(b.emp.name || '', 'ar'));
   $('#ac-emp').innerHTML = '<option value="">جميع الموظفين</option>' + opts.map((e) => `<option value="${esc(e.key)}"${AC.emp === e.key ? ' selected' : ''}>${esc(e.emp.name || e.key)}</option>`).join('');
-  $('#ac-period').textContent = `الفترة: ${AC.from ? 'من ' + dmy(AC.from) : 'من بداية السجل'} ${AC.to ? 'إلى ' + dmy(AC.to) : 'حتى اليوم'}${S.set.countEarly !== false ? ' · الدقائق تشمل التأخر والانصراف المبكر وعدم التواجد' : ' · الدقائق للتأخر فقط'} · ما قُبل له استئذان مستثنى.`;
+  $('#ac-period').textContent = `الفترة: ${AC.from ? 'من ' + dmy(AC.from) : 'من بداية السجل'} ${AC.to ? 'إلى ' + dmy(AC.to) : 'حتى ' + dmy(todayISO())}${AC.from && AC.from === S.set.yearStart ? ' (من بداية العام الدراسي)' : ''}${S.set.countEarly !== false ? ' · الدقائق تشمل التأخر والانصراف المبكر وعدم التواجد' : ' · الدقائق للتأخر فقط'} · ما قُبل له استئذان مستثنى.`;
   const list = acList();
   const P = list.filter((e) => e.cur != null || e.steps.some((x) => x.done));
   const pendSteps = P.reduce((n, e) => n + e.pendingCount, 0);
@@ -2350,24 +2594,25 @@ function openDeductFor(e, minutes) {
   go('entry'); renderJobs(); syncInputs(); render();
   toast('راجع قرار الحسم ثم اطبعه');
 }
-function acClick(ev) {
+async function acClick(ev) {
   const tr = ev.target.closest('tr[data-key]'); if (!tr) return;
   const e = buildTotals(AC.from, AC.to).get(tr.dataset.key); if (!e) return;
   const dot = ev.target.closest('button.ladder-dot');
   if (dot) {
     const i = Number(dot.dataset.step);
     const x = e.steps[i];
-    if (x.done) { if (!confirm(`إلغاء تسجيل الدرجة ${x.step} (${x.act}) كمنفّذة لـ ${e.emp.name}؟`)) return; setStepDone(e.key, i, false); return; }
+    if (x.done) { if (!(await ask({ tone: 'warn', title: 'إلغاء تنفيذ الدرجة', msg: `إلغاء تسجيل الدرجة <b>(${x.step}) ${esc(x.act)}</b> كمنفّذة للموظف <b>${esc(e.emp.name)}</b>؟`, note: 'ستعود الدرجة مستحقة وتظهر في التنبيهات.', ok: 'إلغاء التنفيذ', cancel: 'رجوع' }))) return; setStepDone(e.key, i, false); return; }
     const skipped = e.steps.filter((s) => s.reached && !s.done && s.i < i);
-    if (skipped.length && !confirm(`الدرجات ${skipped.map((s) => s.step).join('، ')} مستحقة ولم تُنفَّذ بعد، والسلّم متسلسل.\nتسجيل الدرجة ${x.step} (${x.act}) منفّذة على أي حال؟`)) return;
-    setStepDone(e.key, i, true); return;
+    if (skipped.length) { if (!(await ask({ tone: 'warn', title: 'تجاوز درجات سابقة', msg: `الدرجات <b>${skipped.map((s) => s.step).join('، ')}</b> مستحقة ولم تُنفَّذ بعد، والإجراءات تُنفَّذ بالتسلسل.<br>تسجيل الدرجة <b>(${x.step}) ${esc(x.act)}</b> منفّذة على أي حال؟`, ok: 'تسجيل على أي حال', cancel: 'رجوع' }))) return; }
+    else if (!(await ask({ title: 'تسجيل تنفيذ الإجراء', msg: `تسجيل الدرجة <b>(${x.step}) ${esc(x.act)}</b> منفّذة للموظف <b>${esc(e.emp.name)}</b>؟`, ok: 'تسجيل التنفيذ' }))) return;
+    setStepDone(e.key, i, true); toast('سُجّل تنفيذ الإجراء'); return;
   }
   const nx = ev.target.closest('[data-next]');
-  if (nx) { const i = Number(nx.dataset.next); if (confirm(`تسجيل الدرجة ${i + 1} (${TIERS[i].act}) منفّذة لـ ${e.emp.name}؟\nلطباعة بيان الإجراء استخدم زر «النموذج والمساءلة».`)) setStepDone(e.key, i, true); return; }
+  if (nx) { const i = Number(nx.dataset.next); if (await ask({ title: 'تسجيل تنفيذ الإجراء', msg: `تسجيل الدرجة <b>(${i + 1}) ${esc(TIERS[i].act)}</b> منفّذة للموظف <b>${esc(e.emp.name)}</b>؟`, note: 'لطباعة بيان الإجراء استخدم زر «النموذج والمساءلة»، ويُسجَّل منفّذاً تلقائياً عند الطباعة.', ok: 'تسجيل التنفيذ' })) { setStepDone(e.key, i, true); toast('سُجّل تنفيذ الإجراء'); } return; }
   const rs = ev.target.closest('[data-raise]');
   if (rs) {
     const kind = rs.dataset.raise; const days = kind === 'late' ? e.lateRaise : e.depRaise;
-    if (!days || !confirm(`تسجيل رفع حسم ${daysWord(days)} لـ ${e.emp.name}؟`)) return;
+    if (!days || !(await ask({ title: 'تسجيل رفع الحسم', msg: `تسجيل رفع حسم <b>${daysWord(days)}</b> للموظف <b>${esc(e.emp.name)}</b> إلى إدارة الموارد البشرية؟`, ok: 'تم الرفع' }))) return;
     RAISED.push({ id: uid(), key: e.key, kind, days, date: todayISO() }); saveLog(); renderActions(); toast('سُجّل رفع الحسم'); return;
   }
   const a = ev.target.closest('[data-act]'); if (!a) return;
@@ -2398,7 +2643,7 @@ $('#ac-csv').addEventListener('click', () => {
 $('#ac-print').addEventListener('click', () => { const h = repActions(AC.from, AC.to, AC.emp); if (h) printPages(h, 'كشف الإجراءات'); });
 
 // ================= تبويب التقارير =================
-const RP = { from: null, to: '', emp: '', preset: 'period' };
+const RP = { from: null, to: '', emp: '', preset: 'all' };
 const empNameOf = (key) => { let n = key; let u = -1; LOG.forEach((r) => { if (r.key === key && (r.updated || 0) > u) { u = r.updated || 0; n = r.emp.name || key; } }); return n; };
 const perTxt = (from, to) => `${from ? 'من ' + dmy(from) : 'من بداية السجل'} ${to ? 'إلى ' + dmy(to) : 'حتى ' + dmy(todayISO())}`;
 const recsIn = (from, to, emp) => LOG.filter((r) => (!from || (r.end || r.date) >= from) && (!to || r.date <= to) && (!emp || r.key === emp));
@@ -2409,12 +2654,16 @@ const typeTxt = (r) => (r.form === 'absence' ? 'غياب' : [hasLate(r) && 'تأ
 const rpStats = (items) => `<div class="rp-stats">${items.map(([v, l, t]) => `<div class="${t || ''}"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`;
 const rpTable = (heads, rows, foot = '') => `<table class="rt"><thead><tr>${heads.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody>${foot ? `<tfoot>${foot}</tfoot>` : ''}</table>`;
 const rpBar = (parts) => { const t = parts.reduce((a, p) => a + p[2], 0) || 1; return `<div class="rp-bar">${parts.map(([c, , n]) => (n ? `<i class="${c}" style="width:${(n / t) * 100}%"></i>` : '')).join('')}</div><div class="rp-lg">${parts.map(([c, l, n]) => `<span><i class="${c}"></i>${l}: ${n}</span>`).join('')}</div>`; };
+const latinDigits = (h) => h.replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 function rpPage(subj, ttl, body, sub, emp) {
   const D = { ...S, doc: { ...S.doc, no: '', date: todayISO() } };
-  return `<div class="page">${headerSchool(D, subj)}${title(ttl)}
-    <p class="rp-sub">${esc(sub)}${emp ? ' · الموظف: ' + esc(empNameOf(emp)) : ''}</p>
+  // التواريخ في سطر الفترة بخط عريض
+  const subH = esc(sub).replace(/(\d{2}\/\d{2}\/\d{4})/g, '<b>$1</b>');
+  return latinDigits(`<div class="page rp">${headerSchool(D, subj)}${title(ttl)}
+    <p class="rp-sub">${subH}${emp ? ` <span class="sep">|</span> الموظف: <b>${esc(empNameOf(emp))}</b>` : ''}</p>
     ${body}
-    <div class="rp-sign">${sign(gx(D, 'مدير المدرسة:', 'مديرة المدرسة:'), D.set.principal)}</div></div>`;
+    <div class="rp-sign">${sign(gx(D, 'مدير المدرسة:', 'مديرة المدرسة:'), D.set.principal)}</div>
+    <div class="rp-foot"><span>نماذج المساءلة والإجراءات</span><span>تاريخ الطباعة: ${dmy(todayISO())}</span></div></div>`);
 }
 const noData = (t) => `<p class="rp-none">${t}</p>`;
 
@@ -2509,7 +2758,7 @@ function repLadder(from, to, emp) {
       const st = x.done ? `<br><small>✓ نُفِّذ${x.doneAt ? ' بتاريخ ' + dmy(x.doneAt) : ''}</small>` : x.reached ? `<br><small><b>● مستحق${x.i === e.due ? '، الإجراء التالي' : ''}</b></small>` : '';
       return `<tr class="${cls}"><td>${x.step}</td><td>${esc(x.th)}</td><td><b>${esc(x.act)}</b></td><td class="tx">${esc(gx(e.emp.gender ? { set: { gender: e.emp.gender } } : S, TIERS[x.i].txt, TIERS[x.i].f || TIERS[x.i].txt))}${st}</td><td style="width:22mm"></td></tr>`;
     });
-    return rpPage('بيان سلّم الإجراءات', 'بيان بعدد دقائق التأخير التي تم رصدها على الموظف والإجراء المتخذ بشأنها', info + rpTable(['م', 'عدد دقائق التأخير', 'نوع الإجراء', 'الإجراء المتخذ', 'التوقيع'], rows), 'الفترة ' + perTxt(from, to));
+    return rpPage('بيان سلّم الإجراءات', 'بيان دقائق التأخير والإجراءات المتخذة بشأنها', info + rpTable(['م', 'عدد دقائق التأخير', 'نوع الإجراء', 'الإجراء المتخذ', 'التوقيع'], rows), 'الفترة ' + perTxt(from, to));
   }).join('');
 }
 function repDeduct(from, to, emp) {
@@ -2543,35 +2792,58 @@ function repUnexcused(from, to, emp) {
 function repMonthly(ym) {
   const [y, m] = ym.split('-').map(Number);
   const from = isoOf(new Date(y, m - 1, 1)); const to = isoOf(new Date(y, m, 0));
+  const today = todayISO(); const toEff = to > today ? today : to;
+  const wdays = (a, b) => { let n = 0; if (a > b) return 0; for (let d = parseISO(a), k = 0; isoOf(d) <= b && k < 400; d.setDate(d.getDate() + 1), k++) if (d.getDay() <= 4) n++; return n; };
+  const lat = (d, o) => { try { return new Intl.DateTimeFormat('ar-SA-u-ca-gregory-nu-latn', o).format(d); } catch (e) { return ''; } };
+  const hj = (d, o) => { try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', o).format(d); } catch (e) { return ''; } };
+  const d1 = new Date(y, m - 1, 1); const d2 = new Date(y, m, 0);
+  const h1 = hj(d1, { month: 'long' }); const h2 = hj(d2, { month: 'long' }); const hy = hj(d2, { year: 'numeric' }).replace(/\s*هـ$/, '');
+  const hRange = `${h1 === h2 ? h1 : h1 + ' – ' + h2} ${hy} هـ`;
+  const sp = (iso) => iso.split('-').reverse().join(' / ');
+  const WD = wdays(from, toEff);
   const R = recsIn(from, to, '');
-  const A = R.filter((r) => r.form === 'absence'); const L = R.filter(hasLate); const P = R.filter(hasEarly);
-  const monthName = new Date(y, m - 1, 1).toLocaleDateString('ar-SA-u-ca-gregory', { month: 'long', year: 'numeric' });
-  const hj = (() => { try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 15)); } catch (e) { return ''; } })();
-  if (!R.length) return rpPage('التقرير الشهري', `التقرير الشهري للانضباط: ${monthName}`, noData('لا توجد سجلات في هذا الشهر.'), `الفترة من ${dmy(from)} إلى ${dmy(to)}`);
-  const lateM = L.reduce((a, r) => a + r.lateMins, 0); const depM = P.reduce((a, r) => a + depMins(r), 0);
-  const tot = periodTotals();
-  const stats = rpStats([[sumDays(A), 'أيام الغياب', 'bad'], [sumDays(A.filter((r) => r.cls === 'بدون عذر')), 'غياب بدون عذر', 'bad'], [L.length, 'حالات التأخر', 'warn'], [hm(lateM), 'مجموع التأخر (ساعة)', 'warn'], [P.length, 'انصراف / عدم تواجد', 'pur'], [dueList().length, 'موظفون عليهم إجراء مستحق', 'bad']]);
-  const sc = { light: 0, medium: 0, heavy: 0 }; L.forEach((r) => { sc[sevKey(r.lateMins)]++; });
-  const dist = `<div class="rp-dist">
-    <div><div class="lb">تصنيف أيام الغياب</div>${rpBar([['c-exc', 'بعذر', sumDays(A.filter((r) => r.cls === 'بعذر'))], ['c-unx', 'بدون عذر', sumDays(A.filter((r) => r.cls === 'بدون عذر'))], ['c-unc', 'لم يُصنَّف', sumDays(A.filter((r) => !r.cls))]])}</div>
-    <div><div class="lb">شدة التأخر</div>${rpBar([['c-s1', 'بسيط', sc.light], ['c-s2', 'متوسط', sc.medium], ['c-s3', 'كبير', sc.heavy]])}</div></div>`;
-  const g = new Map();
-  R.forEach((r) => { const e = g.get(r.key) || { key: r.key, name: r.emp.name || r.key, late: 0, lateN: 0, dep: 0, exc: 0, unx: 0, unc: 0 }; if (hasLate(r)) { e.lateN++; e.late += r.lateMins; } e.dep += depMins(r); if (r.form === 'absence') { if (r.cls === 'بعذر') e.exc += absD(r); else if (r.cls === 'بدون عذر') e.unx += absD(r); else e.unc += absD(r); } g.set(r.key, e); });
-  const rows = [...g.values()].sort((a, b) => (b.late + b.dep) - (a.late + a.dep) || (b.unx + b.unc) - (a.unx + a.unc));
-  const top = rows.filter((e) => e.late + e.dep).slice(0, 10);
-  const max = Math.max(1, ...top.map((e) => e.late + e.dep));
-  const chart = top.length ? `<div class="rp-h">أكثر الموظفين تأخراً وانصرافاً (بالدقائق)</div><div class="chart">${top.map((e) => `<div class="cr"><span class="cn">${esc(e.name)}</span><span class="cb"><i class="c-late" style="width:${(e.late / max) * 100}%"></i><i class="c-dep" style="width:${(e.dep / max) * 100}%"></i></span><span class="cv"><b>${e.late + e.dep}</b> د (${e.late}${e.dep ? ' + ' + e.dep : ''})</span></div>`).join('')}</div>
-    <div class="rp-lg" style="margin:-1mm 0 2mm"><span><i class="c-late"></i>التأخر</span><span><i class="c-dep"></i>الانصراف المبكر وعدم التواجد</span></div>` : '';
-  const table = `<div class="rp-h">ملخص الموظفين</div>` + rpTable(['م', 'الاسم', 'غياب بعذر', 'غياب بدون عذر', 'لم يُصنَّف', 'مرات التأخر', 'دقائق التأخر', 'دقائق الانصراف', 'الإجراء الحالي'], rows.map((e, i) => {
-    const t = tot.get(e.key);
-    return `<tr><td>${i + 1}</td><td class="nm">${esc(e.name)}</td><td>${e.exc || '—'}</td><td class="${e.unx ? 'bad' : ''}">${e.unx || '—'}</td><td>${e.unc || '—'}</td><td>${e.lateN || '—'}</td><td>${e.late || '—'}</td><td>${e.dep || '—'}</td><td class="tx">${t && t.pending ? `<b style="color:#b91c1c">مستحق: ${esc(TIERS[t.due].act)}</b>` : t && t.cur != null ? esc(TIERS[t.cur].act) : '—'}</td></tr>`;
-  }));
-  return rpPage('التقرير الشهري', `التقرير الشهري للانضباط: ${monthName}`, stats + dist + chart + table, `الفترة من ${dmy(from)} إلى ${dmy(to)}${hj ? ' · ' + hj : ''}`);
+  const school = S.set.school ? 'مدرسة ' + esc(S.set.school) : 'المدرسة';
+  const sub = `${school} — ${lat(d1, { month: 'long', year: 'numeric' })} (${hRange}) — من ${sp(from)} إلى ${sp(to)} · ${WD} يوم عمل`;
+
+  // الرسمان
+  const parts = violationParts(R);
+  const total = parts.reduce((a, p) => a + p.n, 0);
+  const top9 = lateEarlyTop(R);
+  const legend = `<div class="mr-lg">${parts.filter((p) => p.n || p.k !== 'other').map((p) => `<div><span><i style="background:${p.c}"></i>${p.l}</span><b>${p.n}<small>${pct(p.n, total)}%</small></b></div>`).join('')}</div>`;
+  const charts = `<div class="mr-charts">
+    <div><h3>ملخص المخالفات</h3>${total ? donutSVG(parts, total) + legend : '<p class="rp-none">لا توجد مخالفات</p>'}</div>
+    <div><h3>التأخر مقابل الانصراف المبكر (الأعلى ${top9.length})</h3>${top9.length ? barsSVG(top9) + `<div class="mr-lg2"><span><i style="background:${AN_C.early}"></i>دقائق التأخر</span><span><i style="background:#4ade80"></i>دقائق الانصراف المبكر</span></div>` : '<p class="rp-none">لا يوجد تأخر أو انصراف</p>'}</div>
+  </div>`;
+
+  // الملخص حسب الموظف
+  const inM = (iso) => iso >= from && iso <= to;
+  const keys = []; const seen = new Set();
+  activeT().forEach((t) => { const k = tkey(t); if (k && !seen.has(k)) { seen.add(k); keys.push({ k, t, name: t.name }); } });
+  R.forEach((r) => { if (!seen.has(r.key)) { seen.add(r.key); keys.push({ k: r.key, t: teachers.find((x) => tkey(x) === r.key), name: r.emp.name || r.key }); } });
+  const rows = keys.map((o, i) => {
+    const rs = R.filter((r) => r.key === o.k);
+    const st = effStart(o.t || { role: 'معلم' });
+    const a = st && st > from ? st : from;
+    const wd = wdays(a, toEff);
+    let exc = 0; let unx = 0;
+    rs.filter((r) => r.form === 'absence').forEach((r) => { const n = absDates(r).filter(inM).length; if (r.cls === 'بعذر') exc += n; else unx += n; });
+    const late = rs.reduce((s0, r) => s0 + (hasLate(r) ? r.lateMins : 0), 0);
+    const early = rs.reduce((s0, r) => s0 + depMins(r), 0);
+    const pres = Math.max(0, wd - exc - unx);
+    const pc = wd ? Math.round((pres / wd) * 100) : 0;
+    const z = (v, bad) => (v ? `<td class="${bad ? 'bad' : ''}">${v}</td>` : '<td class="z">0</td>');
+    return `<tr><td class="z">${i + 1}</td><td class="nm">${esc(o.name)}</td><td class="wd">${wd}</td><td>${pres}</td>${z(exc)}${z(unx, true)}${z(late, late >= 30)}${z(early)}<td><span class="pc"><i style="width:${pc * 0.28}px"></i>${pc}%</span></td></tr>`;
+  });
+  const table = `<h3 class="mr-h">الملخص حسب المعلّم</h3>
+    <table class="mr-tb"><thead><tr><th>م</th><th>المعلّم</th><th>أيام العمل<small>يوم</small></th><th>الحضور<small>يوم</small></th><th>غياب بعذر<small>يوم</small></th><th>غياب بلا عذر<small>يوم</small></th><th>التأخر<small>دقيقة</small></th><th>الانصراف المبكر<small>دقيقة</small></th><th>نسبة الحضور</th></tr></thead>
+    <tbody>${rows.join('') || '<tr><td colspan="9">لا يوجد موظفون. أضفهم من الإعدادات.</td></tr>'}</tbody></table>
+    <p class="mr-note">الحضور = أيام العمل (من تاريخ المباشرة) ناقص أيام الغياب المسجّلة في مساءلات الشهر. الغياب غير المصنّف يُحسب بلا عذر حتى يُصنَّف.</p>`;
+  return `<div class="page mr"><h1 class="mr-t">التقرير الشهري للحضور والانضباط</h1><p class="mr-sub">${sub}</p>${charts}${table}</div>`;
 }
 
 // ---- واجهة التقارير ----
 function renderReports() {
-  if (RP.from == null) { RP.from = S.set.periodFrom || ''; }
+  if (RP.from == null) { [RP.from, RP.to] = presetRange('all'); RP.preset = 'all'; }
   $('#rp-from').value = RP.from; $('#rp-to').value = RP.to;
   if (!$('#mr-month').value) { const t = new Date(); $('#mr-month').value = `${t.getFullYear()}-${pad(t.getMonth() + 1)}`; }
   const keys = [...new Set(LOG.map((r) => r.key))].sort((a, b) => empNameOf(a).localeCompare(empNameOf(b), 'ar'));
@@ -2609,6 +2881,7 @@ function fnRows() {
     .sort((a, b) => b.date.localeCompare(a.date) || (b.created || 0) - (a.created || 0));
 }
 function renderField() {
+  if (!FN.init) { FN.init = true; [FN.from, FN.to] = presetRange('all'); }
   $('#fn-from').value = FN.from; $('#fn-to').value = FN.to;
   const R = fnRows();
   const out = R.filter((n) => n.kind === 'out'); const loc = R.filter((n) => n.kind === 'loc');
@@ -2729,14 +3002,14 @@ $('#fn-from').addEventListener('input', (e) => { FN.from = e.target.value; rende
 $('#fn-to').addEventListener('input', (e) => { FN.to = e.target.value; renderField(); });
 $('#fn-q').addEventListener('input', (e) => { FN.q = e.target.value; renderField(); });
 $('#fn-chips').addEventListener('click', (e) => { const b = e.target.closest('button[data-f]'); if (!b) return; FN.kind = b.dataset.f; renderField(); });
-$('#fn-table').addEventListener('click', (e) => {
+$('#fn-table').addEventListener('click', async (e) => {
   const tr = e.target.closest('tr[data-id]'); if (!tr) return;
   const n = FIELD.find((x) => x.id === tr.dataset.id); if (!n) return;
   const b = e.target.closest('[data-f]'); if (!b) return;
   if (b.dataset.f === 'print') printFieldNote(n);
   else if (b.dataset.f === 'edit') openFieldDlg(n);
   else if (b.dataset.f === 'del') {
-    if (!confirm(`حذف ملاحظة «${FN_KINDS[n.kind]}» للموظف ${n.emp.name} بتاريخ ${dmy(n.date)}؟${n.done ? '\nالمساءلة المطبوعة منها تبقى في السجل.' : ''}`)) return;
+    if (!(await ask({ tone: 'danger', title: 'حذف الملاحظة الميدانية', msg: `حذف ملاحظة <b>${FN_KINDS[n.kind]}</b> للموظف <b>${esc(n.emp.name)}</b> بتاريخ <b>${dmy(n.date)}</b>؟`, note: n.done ? 'المساءلة المطبوعة منها تبقى في السجل.' : '', ok: 'حذف' }))) return;
     FIELD = FIELD.filter((x) => x.id !== n.id); saveField(); updateBadge(); renderField(); toast('حُذفت الملاحظة');
   }
 });
@@ -2828,7 +3101,7 @@ $('#btn-ta-save').addEventListener('click', () => {
   saveTeachers(); taReset(); toast(msg);
 });
 $('#btn-ta-cancel').addEventListener('click', taReset);
-$('#ta-table').addEventListener('click', (e) => {
+$('#ta-table').addEventListener('click', async (e) => {
   const tr = e.target.closest('tr[data-i]'); if (!tr) return;
   const i = Number(tr.dataset.i); const t = teachers[i]; if (!t) return;
   const b = e.target.closest('[data-t]'); if (!b) return;
@@ -2843,7 +3116,7 @@ $('#ta-table').addEventListener('click', (e) => {
     $('#emp-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     $('#ta-name').focus({ preventScroll: true });
   } else if (b.dataset.t === 'del') {
-    if (!confirm(`حذف ${t.name} من قائمة الموظفين؟\nسجل مساءلاته يبقى كما هو.`)) return;
+    if (!(await ask({ tone: 'danger', title: 'حذف موظف', msg: `حذف <b>${esc(t.name)}</b> من قائمة الموظفين؟`, note: 'سجل مساءلاته وإجراءاته يبقى كما هو. لإخفائه من القوائم فقط ألغِ «نشط» بدل الحذف.', ok: 'حذف' }))) return;
     teachers.splice(i, 1); picked.delete(tkey(t)); if (TA.editing === i) taReset(); saveTeachers(); toast('حُذف الموظف');
   }
 });
@@ -2959,10 +3232,10 @@ $('#terms').addEventListener('input', (e) => {
   const i = Number(inp.closest('[data-ti]').dataset.ti);
   S.set.terms[i][inp.dataset.tk] = inp.value; saveSet();
 });
-$('#terms').addEventListener('click', (e) => {
+$('#terms').addEventListener('click', async (e) => {
   const b = e.target.closest('[data-tdel]'); if (!b) return;
   const i = Number(b.dataset.tdel);
-  if (!confirm(`حذف «${S.set.terms[i].name}»؟`)) return;
+  if (!(await ask({ tone: 'danger', title: 'حذف فصل دراسي', msg: `حذف <b>${esc(S.set.terms[i].name)}</b> من الفصول؟`, ok: 'حذف' }))) return;
   S.set.terms.splice(i, 1); saveSet(); renderTerms();
 });
 $('#btn-add-term').addEventListener('click', () => {
@@ -2975,13 +3248,12 @@ function currentTerm() { const t = todayISO(); return (S.set.terms || []).find((
 function termButtons() {
   const t = todayISO();
   return (S.set.terms || []).map((x, i) => (x.from ? `<button type="button" class="termb" data-p="term:${i}">${esc(x.name || 'فصل')}${x.to && x.from <= t && t <= x.to ? ' <small>(الحالي)</small>' : ''}</button>` : '')).join('')
-    + (S.set.yearStart ? '<button type="button" class="termb" data-p="year">العام الدراسي</button>' : '');
+;
 }
 function injectTerms(sel) {
   const c = $(sel); if (!c) return;
   c.querySelectorAll('.termb').forEach((b) => b.remove());
-  const all = c.querySelector('[data-p="all"]');
-  if (all) all.insertAdjacentHTML('beforebegin', termButtons());
+  c.insertAdjacentHTML('beforeend', termButtons());
 }
 $('#btn-period-term').addEventListener('click', () => {
   const t = currentTerm();
@@ -2989,16 +3261,186 @@ $('#btn-period-term').addEventListener('click', () => {
   S.set.periodFrom = t.from; saveSet(); syncInputs(); updateBadge(); toast(`فترة الاحتساب تبدأ من ${dmy(t.from)} (${t.name})`);
 });
 
+// ================= التحليلات =================
+const AN = { from: null, to: '', preset: 'all' };
+const AN_C = { unx: '#ef4444', exc: '#9ca3af', unc: '#db2777', late: '#f5b800', early: '#1e9bf0', gone: '#22c55e', other: '#8b5cf6' };
+const pct = (n, t) => (t ? Math.round((n / t) * 100) : 0);
+function anRange(R) {
+  let from = AN.from; let to = AN.to;
+  const ds = R.map((r) => r.date).sort();
+  if (!from) from = ds[0] || todayISO();
+  if (!to) to = ds.length ? (ds[ds.length - 1] > todayISO() ? ds[ds.length - 1] : todayISO()) : todayISO();
+  return [from, to];
+}
+function absDates(r) {
+  const out = []; const end = r.end && r.end > r.date ? r.end : r.date;
+  for (let d = parseISO(r.date), n = 0; isoOf(d) <= end && n < 400; d.setDate(d.getDate() + 1), n++) { if (d.getDay() !== 5 && d.getDay() !== 6) out.push(isoOf(d)); }
+  return out.length ? out : [r.date];
+}
+function donutSVG(parts, total) {
+  const W = 440; const H = 330; const cx = W / 2; const cy = 160; const r = 112; const sw = 26;
+  const sum = parts.reduce((a, p) => a + p.n, 0) || 1;
+  let a0 = -Math.PI / 2; const segs = []; const labels = [];
+  parts.forEach((p) => {
+    if (!p.n) return;
+    const a1 = a0 + (p.n / sum) * Math.PI * 2;
+    const gap = parts.filter((x) => x.n).length > 1 ? 0.012 : 0;
+    const s = a0 + gap; const e = a1 - gap;
+    const large = e - s > Math.PI ? 1 : 0;
+    const P = (a) => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    const [x1, y1] = P(s); const [x2, y2] = P(e);
+    segs.push(p.n === sum ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${p.c}" stroke-width="${sw}"/>` : `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${p.c}" stroke-width="${sw}"/>`);
+    const m = (a0 + a1) / 2;
+    labels.push({ m, right: Math.cos(m) >= 0, y: cy + (r + 26) * Math.sin(m), t: `${pct(p.n, sum)}%` });
+    a0 = a1;
+  });
+  [true, false].forEach((side) => {
+    const L = labels.filter((l) => l.right === side).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < L.length; i++) if (L[i].y - L[i - 1].y < 17) L[i].y = L[i - 1].y + 17;
+  });
+  const lab = labels.map((l) => {
+    const sx = cx + (r + sw / 2 + 2) * Math.cos(l.m); const sy = cy + (r + sw / 2 + 2) * Math.sin(l.m);
+    const ex = l.right ? W - 52 : 52;
+    const kx = cx + (r + 26) * Math.cos(l.m);
+    return `<polyline points="${sx.toFixed(1)},${sy.toFixed(1)} ${kx.toFixed(1)},${l.y.toFixed(1)} ${ex},${l.y.toFixed(1)}" fill="none" stroke="#9aa5a2" stroke-width="1"/><text x="${l.right ? ex + 4 : ex - 4}" y="${(l.y + 4).toFixed(1)}" text-anchor="${l.right ? 'start' : 'end'}" font-size="13" fill="#4b5563">${l.t}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" class="an-svg" direction="ltr" role="img" aria-label="ملخص المخالفات">${segs.join('')}${lab}
+    <text x="${cx}" y="${cy + 8}" text-anchor="middle" font-size="34" font-weight="800" fill="#16211f">${total}</text>
+    <text x="${cx}" y="${cy + 34}" text-anchor="middle" font-size="13" fill="#5d6b68">مخالفة/حالة</text></svg>`;
+}
+function niceMax(v) { if (v <= 0) return 10; const p = 10 ** Math.floor(Math.log10(v)); const n = v / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; }
+function barsSVG(list) {
+  const W = 470; const H = 330; const L = 58; const T = 30; const B = 110; const Rr = 10;
+  const ph = H - T - B; const pw = W - L - Rr;
+  const mx = niceMax(Math.max(1, ...list.map((e) => Math.max(e.late, e.early))) / 4) * 4;
+  const ticks = [0, 1, 2, 3, 4].map((i) => (mx / 4) * i);
+  const gw = pw / Math.max(list.length, 1); const bw = Math.min(16, gw / 3);
+  const y = (v) => T + ph - (v / mx) * ph;
+  const grid = ticks.map((t) => `<line x1="${L}" x2="${W - Rr}" y1="${y(t)}" y2="${y(t)}" stroke="#e5e7eb"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="#6b7280">${Math.round(t).toLocaleString('en-US')}</text>`).join('');
+  const bars = list.map((e, i) => {
+    const gx = W - Rr - gw * i - gw / 2;
+    const b1 = `<rect x="${(gx - bw - 1).toFixed(1)}" y="${y(e.late).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0, T + ph - y(e.late)).toFixed(1)}" rx="${(bw / 2).toFixed(1)}" fill="${AN_C.early}"><title>${esc(e.name)}: تأخر ${e.late} د</title></rect>`;
+    const b2 = `<rect x="${(gx + 1).toFixed(1)}" y="${y(e.early).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0, T + ph - y(e.early)).toFixed(1)}" rx="${(bw / 2).toFixed(1)}" fill="#4ade80"><title>${esc(e.name)}: انصراف ${e.early} د</title></rect>`;
+    const nm = `<text transform="translate(${gx.toFixed(1)},${T + ph + 8}) rotate(-90)" text-anchor="end" dominant-baseline="middle" font-size="11.5" fill="#374151">${esc(e.name.length > 14 ? e.name.slice(0, 13) + '…' : e.name)}</text>`;
+    return b1 + b2 + nm;
+  }).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" class="an-svg" direction="ltr" role="img" aria-label="التأخر مقابل الانصراف المبكر"><text x="${L - 8}" y="${T - 12}" text-anchor="end" font-size="11" fill="#6b7280">دقيقة</text>${grid}<line x1="${L}" x2="${W - Rr}" y1="${T + ph}" y2="${T + ph}" stroke="#374151"/>${bars}</svg>`;
+}
+function violationParts(R) {
+  const A = R.filter((r) => r.form === 'absence'); const L = R.filter(hasLate); const P = R.filter(hasEarly);
+  const sd = (f) => sumDays(A.filter(f));
+  return [
+    { k: 'unx', l: 'غياب بدون عذر', n: sd((r) => r.cls === 'بدون عذر'), c: AN_C.unx },
+    { k: 'unc', l: 'غياب غير مصنّف', n: sd((r) => !r.cls), c: AN_C.unc },
+    { k: 'exc', l: 'غياب بعذر', n: sd((r) => r.cls === 'بعذر'), c: AN_C.exc },
+    { k: 'late', l: 'أيام تأخر', n: L.length, c: AN_C.late },
+    { k: 'early', l: 'أيام انصراف مبكر', n: P.filter((r) => r.data.dev.earlyOn).length, c: AN_C.early },
+    { k: 'gone', l: 'عدم تواجد أثناء الدوام', n: P.filter((r) => r.data.dev.goneOn).length, c: AN_C.gone },
+    { k: 'other', l: 'حضور/انصراف من موقع آخر', n: R.filter((r) => r.form === 'latedep' && r.data.dev && r.data.dev.otherOn).length, c: AN_C.other },
+  ];
+}
+function lateEarlyTop(R) {
+  const g = new Map();
+  R.forEach((r) => { if (r.form !== 'latedep') return; const e = g.get(r.key) || { key: r.key, name: r.emp.name || r.key, late: 0, early: 0 }; e.late += r.lateMins || 0; e.early += depMins(r); g.set(r.key, e); });
+  return [...g.values()].filter((e) => e.late + e.early).sort((a, b) => (b.late + b.early) - (a.late + a.early)).slice(0, 9);
+}
+function renderAnalytics() {
+  if (AN.from == null) { [AN.from, AN.to] = presetRange('all'); AN.preset = 'all'; }
+  $('#an-from').value = AN.from; $('#an-to').value = AN.to;
+  injectTerms('#an-quick');
+  $$('#an-quick button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === AN.preset)));
+  const R = recsIn(AN.from, AN.to, '');
+  const A = R.filter((r) => r.form === 'absence'); const L = R.filter(hasLate); const P = R.filter(hasEarly);
+  const early = P.filter((r) => r.data.dev.earlyOn); const gone = P.filter((r) => r.data.dev.goneOn);
+  const other = R.filter((r) => r.form === 'latedep' && r.data.dev && r.data.dev.otherOn);
+  const sd = (f) => sumDays(A.filter(f));
+  const parts = [
+    { k: 'unx', l: 'غياب بدون عذر', n: sd((r) => r.cls === 'بدون عذر'), c: AN_C.unx },
+    { k: 'unc', l: 'غياب غير مصنّف', n: sd((r) => !r.cls), c: AN_C.unc },
+    { k: 'exc', l: 'غياب بعذر', n: sd((r) => r.cls === 'بعذر'), c: AN_C.exc },
+    { k: 'late', l: 'أيام تأخر', n: L.length, c: AN_C.late },
+    { k: 'early', l: 'أيام انصراف مبكر', n: early.length, c: AN_C.early },
+    { k: 'gone', l: 'عدم تواجد أثناء الدوام', n: gone.length, c: AN_C.gone },
+    { k: 'other', l: 'حضور/انصراف من موقع آخر', n: other.length, c: AN_C.other },
+  ];
+  const total = parts.reduce((a, p) => a + p.n, 0);
+  const empty = '<p class="an-empty">لا توجد بيانات في هذه الفترة.</p>';
+  $('#an-donut').innerHTML = total ? donutSVG(parts, total) + `<div class="an-legend">${parts.map((p) => `<div><span><i style="background:${p.c}"></i>${p.l}</span><b>${p.n}</b><small>${pct(p.n, total)}%</small></div>`).join('')}</div>` : empty;
+
+  // التأخر مقابل الانصراف
+  const g = new Map();
+  R.forEach((r) => { if (r.form !== 'latedep') return; const e = g.get(r.key) || { key: r.key, name: r.emp.name || r.key, late: 0, early: 0 }; e.late += r.lateMins || 0; e.early += depMins(r); g.set(r.key, e); });
+  const top9 = [...g.values()].filter((e) => e.late + e.early).sort((a, b) => (b.late + b.early) - (a.late + a.early)).slice(0, 9);
+  $('#an-bars-sub').textContent = top9.length ? `الأعلى ${top9.length} ${top9.length <= 10 ? 'مخالفين' : 'مخالفاً'}` : '';
+  $('#an-bars').innerHTML = top9.length ? barsSVG(top9) + `<div class="an-lg2"><span><i style="background:${AN_C.early}"></i>دقائق التأخر</span><span><i style="background:#4ade80"></i>دقائق الانصراف المبكر وعدم التواجد</span></div>` : empty;
+
+  // نمط أيام الأسبوع
+  const [f, t] = anRange(R);
+  const occ = [0, 0, 0, 0, 0];
+  for (let d = parseISO(f), n = 0; isoOf(d) <= t && n < 800; d.setDate(d.getDate() + 1), n++) if (d.getDay() <= 4) occ[d.getDay()]++;
+  const wk = [0, 1, 2, 3, 4].map(() => ({ a: 0, l: 0, e: 0 }));
+  A.forEach((r) => absDates(r).forEach((iso) => { if ((!AN.from || iso >= AN.from) && (!AN.to || iso <= AN.to)) { const w = parseISO(iso).getDay(); if (w <= 4) wk[w].a++; } }));
+  L.forEach((r) => { const w = parseISO(r.date).getDay(); if (w <= 4) wk[w].l++; });
+  P.forEach((r) => { const w = parseISO(r.date).getDay(); if (w <= 4) wk[w].e++; });
+  const avg = wk.map((x, i) => { const o = occ[i] || 1; return { a: x.a / o, l: x.l / o, e: x.e / o, t: (x.a + x.l + x.e) / o }; });
+  const maxT = Math.max(...avg.map((x) => x.t), 0.0001);
+  const hi = avg.reduce((bi, x, i) => (x.t > avg[bi].t ? i : bi), 0);
+  const DN = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+  const workDays = occ.reduce((a, n) => a + n, 0) || 1;
+  const allCases = wk.reduce((a, x) => a + x.a + x.l + x.e, 0);
+  const f1 = (v) => (Math.round(v * 10) / 10).toLocaleString('en-US', { minimumFractionDigits: v ? 1 : 0, maximumFractionDigits: 1 });
+  $('#an-week').innerHTML = allCases ? `<div class="wk">${avg.map((x, i) => `<div class="wk-row"><span class="wk-d">${DN[i]}${i === hi && x.t ? ' <em>الأعلى</em>' : ''}</span>
+      <span class="wk-bar"><span style="width:${(x.t / maxT) * 100}%"><i style="flex:${x.e};background:#a855f7"></i><i style="flex:${x.l};background:#f59e0b"></i><i style="flex:${x.a};background:#ef4444"></i></span></span>
+      <b class="${i === hi && x.t ? 'hi' : ''}">${f1(x.t)}</b></div>`).join('')}</div>
+    <div class="an-lg2"><span><i style="background:#ef4444"></i>غياب</span><span><i style="background:#f59e0b"></i>تأخر</span><span><i style="background:#a855f7"></i>انصراف مبكر</span></div>
+    <p class="an-foot">متوسط اليوم: <b>${f1(allCases / workDays)}</b> حالة</p>` : empty;
+
+  // شدة التأخر
+  const sc = { light: 0, medium: 0, heavy: 0 }; L.forEach((r) => { sc[sevKey(r.lateMins)]++; });
+  const box = (k, l, sub, c) => `<div class="sv-box" style="--c:${c}"><span>${l}</span><b>${sc[k]}</b><em>${pct(sc[k], L.length)}%</em><small>${sub}</small></div>`;
+  $('#an-sev').innerHTML = L.length ? `<div class="sv-bar"><i style="flex:${sc.heavy};background:#dc2626"></i><i style="flex:${sc.medium};background:#f97316"></i><i style="flex:${sc.light};background:#facc15"></i></div>
+    <div class="sv-boxes">${box('light', 'بسيط', '١٠ دقائق فأقل', '#eab308')}${box('medium', 'متوسط', '١١ – ٣٠ دقيقة', '#f97316')}${box('heavy', 'كبير', 'أكثر من ٣٠ دقيقة', '#dc2626')}</div>
+    <p class="an-foot">إجمالي ${L.length} حالة تأخر في الفترة.</p>` : empty;
+
+  // أسباب الغياب
+  const rs = new Map();
+  A.forEach((r) => { const k = !r.cls ? 'غير مصنّف' : r.reason || (r.cls === 'بدون عذر' ? 'بدون عذر' : 'بعذر (بلا سبب محدد)'); rs.set(k, (rs.get(k) || 0) + absD(r)); });
+  const rl = [...rs.entries()].sort((a, b) => b[1] - a[1]);
+  const totA = sumDays(A); const mxA = Math.max(1, ...rl.map((x) => x[1]));
+  const RC = ['#1e9bf0', '#22c55e', '#f5b800', '#8b5cf6', '#14b8a6', '#f97316', '#64748b'];
+  let ci = 0;
+  $('#an-reasons').innerHTML = rl.length ? `<div class="rs">${rl.map(([k, n]) => {
+    const c = k === 'غير مصنّف' ? '#db2777' : k === 'بدون عذر' ? '#dc2626' : RC[ci++ % RC.length];
+    return `<div class="rs-row"><span class="rs-k${k === 'غير مصنّف' ? ' unc' : ''}" title="${esc(k)}">${esc(k)}</span><span class="rs-bar"><i style="width:${(n / mxA) * 100}%;background:${c}"></i></span><b>${n}</b><small>${pct(n, totA)}%</small></div>`;
+  }).join('')}</div>${rs.get('غير مصنّف') ? '<a href="#log" class="an-link" id="an-classify">صنّف الغياب غير المصنّف ←</a>' : ''}` : empty;
+
+  // المعلمون: الأكثر
+  const top = (f0) => { const m = new Map(); R.forEach((r) => { const v = f0(r); if (!v) return; const e = m.get(r.key) || { key: r.key, name: r.emp.name || r.key, v: 0 }; e.v += v; m.set(r.key, e); }); return [...m.values()].sort((a, b) => b.v - a.v).slice(0, 5); };
+  const medal = ['🥇', '🥈', '🥉'];
+  const list = (arr, unit) => (arr.length ? `<ol class="tp">${arr.map((e, i) => `<li><span class="tp-r">${medal[i] || i + 1}</span>${avatar(e.name)}<button type="button" class="tp-n" data-staff="${esc(e.key)}">${esc(e.name)}</button><b>${e.v} ${unit}</b></li>`).join('')}</ol>` : empty);
+  $('#an-top-abs').innerHTML = list(top((r) => (r.form === 'absence' ? absD(r) : 0)), 'يوم');
+  $('#an-top-late').innerHTML = list(top((r) => (hasLate(r) ? r.lateMins : 0)), 'د');
+  $('#an-top-early').innerHTML = list(top((r) => (hasEarly(r) ? depMins(r) : 0)), 'د');
+}
+$('#an-quick').addEventListener('click', (e) => { const b = e.target.closest('button[data-p]'); if (!b) return; AN.preset = b.dataset.p; [AN.from, AN.to] = presetRange(AN.preset); renderAnalytics(); });
+$('#an-from').addEventListener('input', (e) => { AN.from = e.target.value; AN.preset = ''; renderAnalytics(); });
+$('#an-to').addEventListener('input', (e) => { AN.to = e.target.value; AN.preset = ''; renderAnalytics(); });
+$('#view-analytics').addEventListener('click', (e) => {
+  const s0 = e.target.closest('[data-staff]');
+  if (s0) { printPages(repStaff(AN.from, AN.to, s0.dataset.staff), 'تقرير الموظف'); return; }
+  if (e.target.closest('#an-classify')) { e.preventDefault(); LF.tab = 'absence'; LF.cls = '__unc'; LF.view = 'table'; LF.teacher = ''; go('log'); }
+});
+
 // ---------- التنقل ----------
 function go(v) {
-  const VIEWS = ['entry', 'log', 'field', 'actions', 'reports', 'settings'];
+  const VIEWS = ['entry', 'log', 'field', 'actions', 'analytics', 'reports', 'settings'];
   if (!VIEWS.includes(v)) v = 'entry';
   VIEWS.forEach((x) => { $('#view-' + x).hidden = v !== x; });
   document.body.classList.toggle('logview', v !== 'entry');
   $$('.side .nav').forEach((a) => { if (a.dataset.view === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   // بعض بيئات المعاينة (مثل معاينة Claude) تمنع تغيير الرابط، فلا نسمح لذلك بإيقاف التطبيق
   try { if (location.hash !== '#' + v) history.replaceState(null, '', '#' + v); } catch (e) { /* تجاهل */ }
-  if (v === 'log') renderLog(); else if (v === 'field') renderField(); else if (v === 'actions') renderActions(); else if (v === 'reports') renderReports(); else if (v === 'settings') renderSettings(); else fit();
+  if (v === 'log') renderLog(); else if (v === 'field') renderField(); else if (v === 'actions') renderActions(); else if (v === 'analytics') renderAnalytics(); else if (v === 'reports') renderReports(); else if (v === 'settings') renderSettings(); else fit();
   window.scrollTo(0, 0);
 }
 $$('.side .nav').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); go(a.dataset.view); }));
