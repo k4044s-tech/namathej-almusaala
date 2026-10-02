@@ -403,6 +403,12 @@ button.ladder-dot:hover{transform:scale(1.12)}
 .ded-cell small.bad{color:var(--bad);font-weight:700}
 .ded-cell small.ok{color:#15803d}
 .st-late{color:#c96a00;font-weight:700}
+.addots{flex-wrap:wrap;gap:5px;min-width:180px}
+.ladder-dot.ad{width:auto;min-width:40px;height:30px;border-radius:999px;padding:0 7px;font-size:11.5px}
+.ladder-dot.ad.reached{background:#fff;border-style:dashed}
+.ladder-dot.ad.pick,.ladder-legend .ladder-dot.pick{background:#fee2e2;border:2px solid #dc2626;border-style:solid;color:#991b1b}
+.ladder-dot.ad.wait,.ladder-legend .ladder-dot.wait{border-color:#fdba74;background:#fff7ed;color:#c2410c}
+.addots .ladder-dot.done{width:30px;height:30px}
 .adday{display:inline-block;border-radius:6px;padding:1px 7px;margin:1px 0;font-size:12px;border:1px solid var(--line);white-space:nowrap}
 .adday.due{background:#fee2e2;border-color:#fecaca;color:#991b1b}
 .adday.wait{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
@@ -1041,6 +1047,13 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
       <h3>الغياب بدون عذر — قرارات حسم الغياب</h3>
       <p class="hint">يُحسم كل يوم غياب بدون عذر. والغياب الذي لم يُقدَّم له عذر خلال 5 أيام من تاريخه يُعامل معاملة الغياب بدون عذر ويستحق قرار الحسم (مرفق 4).</p>
       <div class="tscroll"><table class="lt" id="ac-abs"></table></div>
+      <div class="ladder-legend" id="ac-abs-lg">
+        <span><span class="ladder-dot done"></span>صدر قرار الحسم</span>
+        <span><span class="ladder-dot reached pick"></span>يستحق الحسم ومحدد للقرار</span>
+        <span><span class="ladder-dot reached"></span>يستحق الحسم وغير محدد</span>
+        <span><span class="ladder-dot ad wait"></span>بانتظار العذر</span>
+        <span>اضغط الأيام الحمراء لاختيار ما يشمله القرار (يوم أو أكثر)، واضغط اليوم الأخضر لإلغاء حسمه.</span>
+      </div>
     </section>
 
     <section class="card">
@@ -1367,7 +1380,7 @@ const S = {
   tr: { from: '', to: '', minutes: '', tier: '' },
   dev: { date: '', lateOn: true, arrive: '', mins: '', goneOn: false, goneFrom: '', goneTo: '', earlyOn: false, earlyAt: '', otherOn: false },
   ded: { minutes: '', days: '', absdays: '' },
-  ad: { days: '', dates: '', ids: [] },
+  ad: { days: '', dates: '', pairs: [] },
   dirty: {},
 };
 if (!NAMES[S.form] || S.form === 'tier' || S.form === 'deduct' || S.form === 'absded') S.form = 'absence';
@@ -1629,7 +1642,7 @@ const EMPTY = () => ({
   nc: { date: '' }, tr: { from: '', to: '', minutes: '', tier: '' },
   dev: { date: '', lateOn: false, arrive: '', mins: '', goneOn: false, goneFrom: '', goneTo: '', earlyOn: false, earlyAt: '', otherOn: false },
   ded: { minutes: '', days: '', absdays: '' },
-  ad: { days: '', dates: '', ids: [] },
+  ad: { days: '', dates: '', pairs: [] },
 });
 const buildDoc = (form, D) => `<div class="page">${BUILDERS[form](D)}</div>`;
 
@@ -2268,12 +2281,11 @@ function afterPrint(mode, save = false) {
     updateBadge(); render();
     if (due.length) setTimeout(() => openDue(due), 600);
   } else if (S.form === 'absded' && mode === 'one') {
-    const ids = (S.ad && S.ad.ids) || [];
-    if (!ids.length) { if (save) toast('لا توجد أيام غياب مرتبطة بهذا القرار. افتحه من تبويب الإجراءات.', 'warn'); return; }
-    const d0 = S.doc.date || todayISO();
-    LOG.forEach((r) => { if (ids.includes(r.id)) { r.dedDone = d0; r.updated = Date.now(); } });
+    const pairs = (S.ad && S.ad.pairs) || [];
+    if (!pairs.length) { if (save) toast('لا توجد أيام غياب مرتبطة بهذا القرار. افتحه من تبويب الإجراءات.', 'warn'); return; }
+    markDed(pairs, S.doc.date || todayISO());
     saveLog(); updateBadge(); render();
-    toast(`سُجّل حسم ${daysWord(Number(S.ad.days) || ids.length)} غياب`);
+    toast(`سُجّل حسم ${daysWord(pairs.length)} غياب`);
   } else if (S.form === 'tier' && mode === 'one') {
     if (save && (!empKey(S.emp) || tierIndex(S.tr) == null)) { toast('لم يُحفظ: أدخل اسم الموظف ومجموع الدقائق'); return; }
     const key = empKey(S.emp);
@@ -2764,13 +2776,24 @@ function renderActions() {
 
   // الغياب بدون عذر
   const AB = absDedList();
-  $('#ac-abs').innerHTML = AB.length ? `<thead><tr><th>م</th><th>الاسم</th><th>أيام الغياب</th><th>تستحق الحسم</th><th>بانتظار العذر</th><th>حُسمت</th><th></th></tr></thead><tbody>${AB.map((e, i) => `<tr data-akey="${esc(e.key)}">
+  $('#ac-abs').innerHTML = AB.length ? `<thead><tr><th>م</th><th>الاسم</th><th>أيام الغياب</th><th>تستحق الحسم</th><th>حُسمت</th><th></th></tr></thead><tbody>${AB.map((e, i) => {
+    const sel = absSel(e);
+    return `<tr data-akey="${esc(e.key)}">
       <td class="num">${i + 1}</td><td>${nameCell({ emp: e.emp, key: e.key })}</td>
-      <td class="det" style="font-size:12.5px">${e.rows.map((x) => `<span class="adday ${x.st}">${esc(x.label)}</span>`).join(' ')}</td>
-      <td class="num">${e.dueDays ? `<b style="color:var(--bad)">${daysWord(e.dueDays)}</b>` : '—'}</td>
-      <td class="num">${e.waitDays ? `${daysWord(e.waitDays)}<small class="hint" style="display:block;margin:0">${esc(e.waitNote)}</small>` : '—'}</td>
+      <td><div class="ladder addots">${e.days.map((d) => {
+        const lbl = `${Number(d.iso.slice(8))}/${Number(d.iso.slice(5, 7))}`;
+        const di = dateInfo(d.iso);
+        const st = d.st === 'done' ? `حُسم${d.on ? ' بتاريخ ' + dmy(d.on) : ''} — اضغط لإلغاء الحسم` : d.st === 'due' ? `${d.nox ? 'لم يُقدَّم عذر خلال 5 أيام' : 'غياب بدون عذر'} — اضغط ${sel.has(d.k) ? 'لاستبعاده من' : 'لإضافته إلى'} القرار` : `بانتظار العذر — يُستحق الحسم بعد ${daysWord(Math.max(1, ABS_GRACE - daysAgo(d.z)))}`;
+        const t = esc(`${di ? di.day + ' ' : ''}${dmy(d.iso)} · ${st}`);
+        if (d.st === 'done') return `<button type="button" class="ladder-dot done" data-dk="${esc(d.k)}" title="${t}" aria-label="${t}">✓</button>`;
+        if (d.st === 'due') return `<button type="button" class="ladder-dot reached ad${sel.has(d.k) ? ' pick' : ''}" data-dk="${esc(d.k)}" title="${t}" aria-label="${t}" aria-pressed="${sel.has(d.k)}">${lbl}</button>`;
+        return `<span class="ladder-dot ad wait" title="${t}">${lbl}</span>`;
+      }).join('')}</div></td>
+      <td class="num">${e.dueDays ? `<b style="color:var(--bad)">${daysWord(e.dueDays)}</b>${sel.size !== e.dueDays ? `<small class="hint" style="display:block;margin:0">المحدد للقرار: ${sel.size ? daysWord(sel.size) : 'لا شيء'}</small>` : ''}` : '—'}${e.waitDays ? `<small class="hint" style="display:block;margin:0;color:#c2410c">${daysWord(e.waitDays)} بانتظار العذر</small>` : ''}</td>
       <td class="num">${e.doneDays ? `<span class="gdone">${daysWord(e.doneDays)} ✔</span>` : '—'}</td>
-      <td><div class="acts">${e.dueDays ? `<button type="button" class="btn warn" data-absded="1">قرار حسم غياب</button><button type="button" class="btn" data-absdone="1">تم الحسم</button>` : ''}</div></td></tr>`).join('')}</tbody>` : '<tbody><tr><td class="empty-log">لا يوجد غياب بدون عذر أو غياب تجاوز 5 أيام دون عذر في هذه الفترة.</td></tr></tbody>';
+      <td><div class="acts">${e.dueDays ? `<button type="button" class="btn warn" data-absded="1"${sel.size ? '' : ' disabled'}>قرار حسم غياب (${sel.size})</button><button type="button" class="btn" data-absdone="1"${sel.size ? '' : ' disabled'}>تم الحسم</button>` : ''}</div></td></tr>`;
+  }).join('')}</tbody>` : '<tbody><tr><td class="empty-log">لا يوجد غياب بدون عذر أو غياب تجاوز 5 أيام دون عذر في هذه الفترة.</td></tr></tbody>';
+  $('#ac-abs-lg').hidden = !AB.length;
 
   const E = list.filter((e) => e.depN);
   $('#ac-early').innerHTML = E.length ? `<thead><tr><th>م</th><th>الاسم</th><th>مجموع الانصراف المبكر</th><th>مرات</th><th>أيام الحسم</th><th>الباقي للحسم التالي</th><th></th></tr></thead><tbody>${E.map((e, i) => `<tr data-key="${esc(e.key)}">
@@ -2831,33 +2854,62 @@ function interruptionCases(from = AC.from, to = AC.to) {
 
 // أيام الغياب بدون عذر (أو بلا عذر بعد 5 أيام) لكل موظف
 const ABS_GRACE = 5;
+// أيام المساءلة نفسها (الجمعة والسبت مستبعدان إلا إذا سُجّل الغياب شاملاً لها)
+function recDates(r) {
+  const [a, z] = absRange(r); const keepWe = r.data && r.data.abs && r.data.abs.noWeekend === false; const out = [];
+  for (let d = parseISO(a), n = 0; isoOf(d) <= z && n < 400; d.setDate(d.getDate() + 1), n++) { const w = d.getDay(); if (keepWe || (w !== 5 && w !== 6)) out.push(isoOf(d)); }
+  return out.length ? out : [a];
+}
 function absDedList() {
   const inR = (d) => (!AC.from || d >= AC.from) && (!AC.to || d <= AC.to);
   const m = new Map();
   LOG.forEach((r) => {
     if (r.form !== 'absence' || r.cls === 'بعذر' || r.perm === 'مقبول') return;
-    const [a, z] = absRange(r);
-    if (!inR(a) && !inR(z)) return;
-    const late = !r.cls && daysAgo(z) >= ABS_GRACE;
-    const st = r.dedDone ? 'done' : r.cls === 'بدون عذر' || late ? 'due' : 'wait';
-    const n = absD(r); // نفس عدد الأيام المسجّل في المساءلة
-    const e = m.get(r.key) || { key: r.key, emp: r.emp, rows: [], due: [], dueDays: 0, waitDays: 0, doneDays: 0, waitNote: '' };
-    const label = (a === z ? dmy(a) : `${dmy(a)} ← ${dmy(z)}`) + (st === 'due' && !r.cls ? ' (بلا عذر)' : '');
-    e.rows.push({ id: r.id, st, label, a, z, n, r });
-    if (st === 'due') { e.due.push(r); e.dueDays += n; } else if (st === 'wait') { e.waitDays += n; const left = ABS_GRACE - daysAgo(z); e.waitNote = `يُستحق الحسم بعد ${daysWord(Math.max(1, left))} إن لم يُقدَّم عذر`; } else e.doneDays += n;
+    const z = absRange(r)[1];
+    const nox = !r.cls && daysAgo(z) >= ABS_GRACE;
+    const dueRec = r.cls === 'بدون عذر' || nox;
+    const e = m.get(r.key) || { key: r.key, emp: r.emp, days: [], dueDays: 0, waitDays: 0, doneDays: 0 };
+    recDates(r).forEach((iso) => {
+      if (!inR(iso)) return;
+      const on = r.dedDone || (r.dedOn && r.dedOn[iso]) || '';
+      const st = on ? 'done' : dueRec ? 'due' : 'wait';
+      e.days.push({ k: r.id + '|' + iso, rid: r.id, iso, z, st, on, nox });
+      if (st === 'due') e.dueDays++; else if (st === 'wait') e.waitDays++; else e.doneDays++;
+    });
     if ((r.updated || 0) >= (e.upd || 0)) { e.upd = r.updated || 0; e.emp = r.emp; }
-    m.set(r.key, e);
+    if (e.days.length) m.set(r.key, e);
   });
-  m.forEach((e) => e.rows.sort((x, y) => x.a.localeCompare(y.a)));
+  m.forEach((e) => e.days.sort((x, y) => x.iso.localeCompare(y.iso)));
   return [...m.values()].sort((x, y) => y.dueDays - x.dueDays || y.waitDays - x.waitDays);
 }
+// الأيام المحددة للقرار لكل موظف (افتراضياً كل الأيام المستحقة)
+const AD_SEL = new Map();
+function absSel(e) {
+  const due = e.days.filter((d) => d.st === 'due').map((d) => d.k);
+  let s0 = AD_SEL.get(e.key);
+  if (!s0) { s0 = new Set(due); AD_SEL.set(e.key, s0); }
+  [...s0].forEach((k) => { if (!due.includes(k)) s0.delete(k); });
+  return s0;
+}
+function markDed(pairs, on) {
+  pairs.forEach(([rid, iso]) => {
+    const r = LOG.find((x) => x.id === rid); if (!r) return;
+    if (r.dedDone && !on) { r.dedOn = Object.fromEntries(recDates(r).map((d) => [d, r.dedDone])); delete r.dedDone; }
+    r.dedOn = r.dedOn || {};
+    if (on) r.dedOn[iso] = on; else delete r.dedOn[iso];
+    r.updated = Date.now();
+  });
+}
 function openAbsDedFor(e) {
+  const sel = absSel(e);
+  const days = e.days.filter((d) => sel.has(d.k));
+  if (!days.length) { toast('اختر يوماً واحداً على الأقل', 'warn'); return; }
   S.form = 'absded'; store.set('hf.form', S.form);
   S.emp = { name: '', civil: '', spec: '', level: '', jobno: '', job: S.emp.job, ...e.emp };
   const t = teachers.find((x) => (e.emp.civil && x.civil === e.emp.civil) || x.name === e.emp.name);
   if (t) ['civil', 'spec', 'level', 'jobno', 'job'].forEach((k) => { if (t[k]) S.emp[k] = t[k]; });
-  const dates = e.due.map((r) => { const [a, z] = absRange(r); const ia = dateInfo(a); const iz = dateInfo(z); return a === z ? `${ia ? ia.day + ' ' + ia.hijri + 'هـ' : dmy(a)}` : `من ${ia ? ia.hijri : dmy(a)}هـ إلى ${iz ? iz.hijri : dmy(z)}هـ`; });
-  S.ad = { days: String(e.dueDays), dates: dates.join('، '), ids: e.due.map((r) => r.id) };
+  const dates = days.map((d) => { const i = dateInfo(d.iso); return i ? `${i.day} ${i.hijri}هـ` : dmy(d.iso); });
+  S.ad = { days: String(days.length), dates: dates.join('، '), pairs: days.map((d) => [d.rid, d.iso]) };
   S.doc.date = todayISO();
   go('entry'); renderJobs(); syncInputs(); render();
   toast('راجع قرار حسم الغياب ثم احفظه أو اطبعه، ويُسجَّل الحسم منفّذاً');
@@ -2865,11 +2917,22 @@ function openAbsDedFor(e) {
 $('#ac-abs').addEventListener('click', async (ev) => {
   const tr = ev.target.closest('tr[data-akey]'); if (!tr) return;
   const e = absDedList().find((x) => x.key === tr.dataset.akey); if (!e) return;
+  const dot = ev.target.closest('[data-dk]');
+  if (dot) {
+    const d = e.days.find((x) => x.k === dot.dataset.dk); if (!d) return;
+    if (d.st === 'due') { const sel = absSel(e); if (sel.has(d.k)) sel.delete(d.k); else sel.add(d.k); renderActions(); return; }
+    if (d.st === 'done') {
+      if (!(await ask({ tone: 'warn', title: 'إلغاء حسم يوم', msg: `إلغاء تسجيل حسم يوم <b>${dmy(d.iso)}</b> للموظف <b>${esc(e.emp.name || '')}</b>؟`, note: 'سيعود اليوم مستحقاً للحسم ويظهر في التنبيهات.', ok: 'إلغاء الحسم', cancel: 'رجوع' }))) return;
+      markDed([[d.rid, d.iso]], ''); saveLog(); updateBadge(); renderActions(); toast('أُلغي حسم اليوم');
+    }
+    return;
+  }
   if (ev.target.closest('[data-absded]')) { openAbsDedFor(e); return; }
   if (ev.target.closest('[data-absdone]')) {
-    if (!(await ask({ title: 'تسجيل حسم الغياب', msg: `تسجيل حسم <b>${daysWord(e.dueDays)}</b> غياب للموظف <b>${esc(e.emp.name || '')}</b> كمنفّذ دون طباعة القرار؟`, ok: 'تم الحسم' }))) return;
-    const ids = e.due.map((r) => r.id); const d0 = todayISO();
-    LOG.forEach((r) => { if (ids.includes(r.id)) { r.dedDone = d0; r.updated = Date.now(); } });
+    const sel = absSel(e); const days = e.days.filter((x) => sel.has(x.k));
+    if (!days.length) return;
+    if (!(await ask({ title: 'تسجيل حسم الغياب', msg: `تسجيل حسم <b>${daysWord(days.length)}</b> غياب للموظف <b>${esc(e.emp.name || '')}</b> كمنفّذ دون طباعة القرار؟`, ok: 'تم الحسم' }))) return;
+    markDed(days.map((x) => [x.rid, x.iso]), todayISO());
     saveLog(); updateBadge(); renderActions(); toast('سُجّل حسم الغياب');
   }
 });
