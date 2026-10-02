@@ -232,13 +232,6 @@ body.logview .bar{display:none}
 .duerow .who2 span{font-size:13px;color:var(--muted)}
 .duerow .act2{font-weight:700;color:var(--bad);font-size:14px}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
-.stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.stat .k{font-size:13.5px;color:var(--muted)}
-.stat .v{font-size:30px;font-weight:700;line-height:1.3;margin:4px 0 2px;font-variant-numeric:tabular-nums}
-.stat .v.sm{font-size:20px;line-height:1.5;margin:8px 0 6px}
-.stat .s{font-size:12.5px;color:var(--muted)}
-.stat .s em{font-style:normal;color:var(--bad);font-weight:600}
-.v.red{color:var(--bad)} .v.orange{color:#c96a00} .v.blue{color:#2563a8}
 .vtog{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:10px;background:#fff}
 .vtog button{border:0;background:none;padding:8px 18px;font-size:14px;cursor:pointer;min-height:38px;color:var(--ink)}
 .vtog button[aria-selected="true"]{background:var(--ink);color:#fff;font-weight:600}
@@ -252,7 +245,6 @@ table.lt td{padding:11px 10px;border-bottom:1px solid #edf1f0;vertical-align:mid
 table.lt tr:hover td{background:#fafcfb}
 .dcell b{display:block}
 .dcell span{display:block;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.pcell{display:flex;align-items:center;gap:8px}
 .av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex:0 0 auto}
 .tag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600;margin:1px 0 1px 4px;white-space:nowrap}
 .tag.abs{background:#fde8e6;color:#9b2219} .tag.late{background:#fff0dc;color:#9a5200}
@@ -264,13 +256,8 @@ table.lt tr:hover td{background:#fafcfb}
 .sev{display:inline-block;height:6px;border-radius:3px}
 .sev.s1{background:#8fc9a8;width:18px} .sev.s2{background:#e8962e;width:34px} .sev.s3{background:#d34a3c;width:50px}
 .sevl{font-size:12px;color:var(--muted)}
-.racts{display:flex;gap:6px;justify-content:flex-end;white-space:nowrap}
-.racts .btn{min-height:34px;padding:4px 10px;font-size:13px}
-.racts .btn.pr{border-color:#9fb7e0;color:#1f4f8a;background:#f4f8ff}
-.racts .btn.del{color:var(--bad);border-color:#e5c0bb}
 .empty-log{text-align:center;color:var(--muted);padding:34px 10px;font-size:14.5px}
 .num{font-variant-numeric:tabular-nums}
-.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .gdue{color:var(--bad);font-weight:600}
 .gdone{color:var(--teal-deep)}
 
@@ -465,26 +452,7 @@ button.ladder-dot:hover{transform:scale(1.12)}
 @media (max-width:900px){ .rp-f-act{width:100%} .rp-f-act .f{flex:1} }
 
 /* المتابعة الميدانية */
-.fnbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
-.fnbar .f{margin:0;min-width:170px}
-.fnbar .sp{flex:1}
-.fnbar .btn{min-height:42px}
-.fn-note{display:block;font-size:12px;color:var(--muted);margin-top:3px}
-.fn-doc{font-size:12.5px;line-height:1.6}
-.mcell .wait{font-size:12.5px;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:999px;padding:3px 10px}
-.dlg-fn{width:min(620px,calc(100vw - 24px))}
-.dlg.dlg-fn h2{color:var(--ink);margin-bottom:12px}
-.fn-kinds{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.fn-kinds button{text-align:start;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink)}
-.fn-kinds button b{display:block;font-size:14px}
-.fn-kinds button span{display:block;font-size:12px;color:var(--muted)}
-.fn-kinds button[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-wash);box-shadow:0 0 0 1.5px var(--teal)}
-.fn-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
-.fn-grid .full{grid-column:1/-1}
-.fn-grid [hidden]{display:none}
-.fn-grid .hint{margin:-4px 0 10px}
 .fn-err{color:var(--bad);font-weight:600;font-size:13.5px;margin:4px 0 0;min-height:1em}
-@media (max-width:600px){ .fn-grid,.fn-kinds{grid-template-columns:1fr} }
 
 /* الإعدادات */
 .log-narrow{max-width:1040px}
@@ -505,6 +473,35 @@ button.ladder-dot:hover{transform:scale(1.12)}
 .emp-form select{display:block;width:100%;margin-top:3px;min-height:42px;padding:8px 10px;border:1px solid #b9c6c3;border-radius:6px;background:#fff;font:inherit;font-size:15px}
 .emp-btns{display:flex;gap:8px;margin-bottom:10px;grid-column:span 2}
 .emp-btns .btn{min-height:42px}
+.cols-box{border:1px solid #b7ddd6;background:#f4faf9;border-radius:12px;padding:14px 16px;margin:4px 0 12px}
+.cols-h{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--teal-deep)}
+.cols-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.cols-lbl{min-width:74px;font-size:14px;font-weight:700;color:var(--muted)}
+.cols-lbl.req{color:#b91c1c}
+.col{font-size:15px;font-weight:600;padding:6px 14px;border-radius:999px;background:#fff;border:1px solid #c9d3d1;color:var(--ink)}
+.col.req{background:#fef2f2;border:1.5px solid #f87171;color:#991b1b;font-weight:700}
+.col.req::after{content:' *';color:#dc2626}
+.cols-note{margin:4px 0 0;font-size:14px;line-height:1.7;color:#374151}
+.ta-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 8px;flex-wrap:wrap}
+.btn.danger-o{border-color:#e5c0bb;color:#b91c1c;font-weight:600}
+.btn.danger-o:hover{background:#fef2f2;border-color:#dc2626}
+.btn.danger-o[hidden]{display:none}
+.combo{position:relative}
+.combo .f{margin-bottom:12px}
+.combo input{padding-inline-end:38px!important}
+.combo-arrow{position:absolute;inset-inline-end:6px;top:30px;width:30px;height:32px;border:0;background:none;color:var(--muted);font-size:16px;cursor:pointer}
+.combo-list{position:absolute;inset-inline:0;top:calc(100% - 8px);z-index:40;margin:0;padding:4px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(16,33,31,.16);max-height:280px;overflow:auto}
+.combo-list[hidden]{display:none}
+.combo-list li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:7px;cursor:pointer;font-size:14.5px}
+.combo-list li small{color:var(--muted);font-size:12px;direction:ltr}
+.combo-list li.on,.combo-list li:hover{background:var(--teal-wash)}
+.combo-list li.cur b{color:var(--teal-deep)}
+.combo-list .empty{color:var(--muted);cursor:default;justify-content:center}
+.an-emp{display:block;width:100%;margin-top:3px;min-height:42px;padding:8px 10px;border:1px solid #b9c6c3;border-radius:6px;background:#fff;font:inherit;font-size:15px}
+#view-analytics .filt{grid-template-columns:repeat(3,minmax(0,220px))}
+.ea-bar{display:flex;justify-content:space-between;gap:10px;margin:4px 0 12px;flex-wrap:wrap}
+.ea-wrap{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;overflow:hidden}
+@media (max-width:900px){ #view-analytics .filt{grid-template-columns:1fr 1fr} #view-analytics .filt .f:last-child{grid-column:1/-1} }
 .imp-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0 8px}
 details.paste{margin:6px 0}
 details.paste summary{cursor:pointer;font-size:13.5px;color:var(--teal-deep);font-weight:600}
@@ -530,9 +527,6 @@ details.paste[open] summary{margin-bottom:8px}
 }
 
 /* التحليلات */
-.an-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-.an-filter{display:flex;gap:10px}
-.an-filter .f{margin:0;min-width:150px}
 .an-sec{display:flex;align-items:baseline;gap:10px;margin:22px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
 .an-sec b{font-size:17px}
 .an-sec span{font-size:13px;color:var(--muted)}
@@ -591,7 +585,7 @@ ol.tp b{color:#dc2626;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media (max-width:1100px){ .an-grid.g3{grid-template-columns:1fr 1fr} }
 @media (max-width:600px){ .an-legend{grid-template-columns:1fr} }
 @media (max-width:430px){ .side .nav{font-size:12px} }
-@media (max-width:900px){ .an-grid.g2,.an-grid.g3{grid-template-columns:minmax(0,1fr)} .an-filter{width:100%} .an-filter .f{flex:1;min-width:0} }
+@media (max-width:900px){ .an-grid.g2,.an-grid.g3{grid-template-columns:minmax(0,1fr)} }
 
 .side-credit{margin:18px 6px 0;padding:14px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.6;color:#374151}
 .side-credit b{font-size:14.5px;color:var(--teal-deep)}
@@ -621,7 +615,6 @@ ol.tp b{color:#dc2626;font-variant-numeric:tabular-nums;white-space:nowrap}
   .side .nav[aria-current="page"]{box-shadow:inset 0 -3px 0 var(--teal)}
   .log{padding:14px 12px 30px}
   .stats{grid-template-columns:1fr 1fr}
-  .stat .v{font-size:26px}
   .filt{grid-template-columns:1fr 1fr}
   .chips button{font-size:14px;min-height:38px}
   .tb .btn{flex:1 1 auto}
@@ -633,17 +626,10 @@ ol.tp b{color:#dc2626;font-variant-numeric:tabular-nums;white-space:nowrap}
   .side .nav{flex:1 1 0;min-width:0;padding:10px 2px;font-size:13px;position:relative}
   .side .nav .badge{position:absolute;top:1px;inset-inline-end:2px;min-width:17px;height:17px;font-size:10.5px;padding:0 4px}
 }
-@media (max-width:600px){
-  .fnbar{display:grid;grid-template-columns:1fr 1fr}
-  .fnbar .f{min-width:0}
-  .fnbar .sp{display:none}
-  .fnbar .btn{grid-column:1/-1}
-}
 label.chk2{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:0 0 8px;cursor:pointer;min-height:28px}
 label.chk2 input{width:18px;height:18px;accent-color:var(--teal)}
 .tlist label.pick{display:flex;gap:8px;align-items:center;flex:1;min-width:0;cursor:pointer}
 .tlist label.pick input{width:16px;height:16px;flex:0 0 auto;accent-color:var(--teal)}
-.mgr-sub{font-size:12.5px;font-weight:600;color:var(--teal-deep);margin:14px 0 6px}
 .btn:disabled{opacity:.5;cursor:default}
 .btn:disabled:hover{border-color:#b9c6c3}
 
@@ -727,13 +713,8 @@ body:not(.locked) #gate{display:none}
 @media (max-width:600px){ .ubtn span{display:none} .ubtn{padding:5px} }
 .wa-link{font-weight:700;color:#15803d;text-decoration:none;border-bottom:1px dashed #15803d}
 .wa-link:hover{color:#166534;border-bottom-style:solid}
-.side-user{margin:14px 6px 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:#f8fbfa;font-size:13px;line-height:1.6}
-.side-user b{display:block;font-size:14px}
-.side-user span{color:var(--muted)}
-.side-user button{margin-top:8px;width:100%;min-height:36px;border-radius:8px;border:1px solid #e5c0bb;background:#fff;color:#b91c1c;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-@media (max-width:900px){ .side-user{display:none} }
 body.role-view .side .nav[data-view="entry"],body.role-view .side .nav[data-view="field"]{display:none!important}
-body.role-view #ib-start,body.role-view [data-issue],body.role-view [data-act],body.role-view .mcell .del,body.role-view .racts .del,body.role-view #bulkbar,body.role-view .cseg,body.role-view #btn-fn-add,body.role-view .nx,body.role-view [data-raise],body.role-view #emp-card .emp-form,body.role-view #emp-card .imp-row{display:none!important}
+body.role-view #ib-start,body.role-view [data-issue],body.role-view [data-act],body.role-view .mcell .del,body.role-view #bulkbar,body.role-view .cseg,body.role-view #btn-fn-add,body.role-view .nx,body.role-view [data-raise],body.role-view #emp-card .emp-form,body.role-view #emp-card .imp-row{display:none!important}
 body.role-view table.lt select,body.role-view table.lt input,body.role-view button.ladder-dot{pointer-events:none;opacity:.75}
 </style>
 </head>
@@ -823,7 +804,7 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
 
     <fieldset>
       <legend>الموظف</legend>
-      <label class="f">الاسم<input data-k="emp.name" id="in-name" list="dl-names" autocomplete="off"></label>
+      <div class="combo" id="name-combo"><label class="f">الاسم<input data-k="emp.name" id="in-name" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="name-list" aria-autocomplete="list"></label><button type="button" class="combo-arrow" id="name-arrow" tabindex="-1" aria-label="عرض كل الموظفين">▾</button><ul class="combo-list" id="name-list" role="listbox" hidden></ul></div>
       <datalist id="dl-names"></datalist>
       <p class="empsum" id="emp-sum" hidden></p>
       <div class="g2">
@@ -1085,6 +1066,7 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
       <div class="filt">
         <label class="f">من تاريخ<input type="date" id="an-from"></label>
         <label class="f">إلى تاريخ<input type="date" id="an-to"></label>
+        <label class="f">التحليل لـ<select id="an-emp" class="an-emp"><option value="">جميع الموظفين</option></select></label>
       </div>
       <div class="chips" id="an-quick" style="margin-top:12px">
         <span class="chips-cap">فترات جاهزة:</span>
@@ -1095,6 +1077,11 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
       </div>
     </section>
 
+    <div id="an-one" hidden>
+      <div class="ea-bar"><button type="button" class="btn" id="an-one-back">← رجوع لتحليل الجميع</button><button type="button" class="btn primary" id="an-one-print">طباعة التحليل</button></div>
+      <div class="ea-wrap" id="an-one-body"></div>
+    </div>
+    <div id="an-all">
     <div class="an-sec"><b>المخالفات</b><span>ما نوعها، ومتى تكثر، ولماذا</span></div>
     <div class="an-grid g2">
       <section class="an-card"><div class="an-h"><h3>ملخص المخالفات</h3><span>نسبة كل نوع من حالات الفترة</span></div><div id="an-donut"></div></section>
@@ -1106,11 +1093,12 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
       <section class="an-card"><div class="an-h"><h3>أسباب الغياب</h3></div><div id="an-reasons"></div></section>
     </div>
 
-    <div class="an-sec"><b>الموظفون</b><span>انقر أي اسم لطباعة تقريره</span></div>
+    <div class="an-sec"><b>الموظفون</b><span>انقر أي اسم لعرض تحليله</span></div>
     <div class="an-grid g3">
       <section class="an-card"><div class="an-h"><h3><i class="dot" style="background:#ef4444"></i>الأكثر غياباً</h3></div><div id="an-top-abs"></div></section>
       <section class="an-card"><div class="an-h"><h3><i class="dot" style="background:#f97316"></i>الأكثر تأخراً</h3></div><div id="an-top-late"></div></section>
       <section class="an-card"><div class="an-h"><h3><i class="dot" style="background:#eab308"></i>الأكثر انصرافاً مبكراً</h3></div><div id="an-top-early"></div></section>
+    </div>
     </div>
   </div>
 </div>
@@ -1193,9 +1181,9 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
       <h3>المعلمون والإداريون</h3>
       <p class="hint">أضف الموظفين يدوياً أو من ملف Excel. تُعبّأ بياناتهم في النماذج تلقائياً عند اختيار الاسم، ويُطابَق السجل برقم الهوية.</p>
       <div class="emp-form">
-        <label class="f">رقم الهوية<input id="ta-civil" inputmode="numeric" autocomplete="off"></label>
-        <label class="f w2">الاسم<input id="ta-name" autocomplete="off"></label>
-        <label class="f">الرقم<input id="ta-num" inputmode="numeric" autocomplete="off"></label>
+        <label class="f">السجل المدني *<input id="ta-civil" inputmode="numeric" autocomplete="off"></label>
+        <label class="f w2">الاسم *<input id="ta-name" autocomplete="off"></label>
+        <label class="f">الرقم *<input id="ta-num" inputmode="numeric" autocomplete="off"></label>
         <label class="f">الفئة<select id="ta-role"><option>معلم</option><option>إداري</option></select></label>
         <label class="f">التخصص<input id="ta-spec" autocomplete="off"></label>
         <label class="f">المستوى/المرتبة<input id="ta-level" autocomplete="off"></label>
@@ -1211,16 +1199,23 @@ body.role-view table.lt select,body.role-view table.lt input,body.role-view butt
       <div class="imp-row">
         <button type="button" class="btn" id="btn-ta-import">استيراد من ملف Excel</button>
         <input type="file" id="ta-file" accept=".xlsx,.xls,.csv" hidden>
-        <span class="hint" style="margin:0">أعمدة الملف: رقم الهوية، الاسم، الرقم، الفئة (معلم أو إداري)، التخصص، المرتبة، رقم الوظيفة، تاريخ المباشرة. كلها اختيارية عدا الاسم.</span>
+      </div>
+      <div class="cols-box">
+        <div class="cols-h">أعمدة ملف Excel (الصف الأول عناوين الأعمدة)</div>
+        <div class="cols-row"><span class="cols-lbl req">أساسية</span>
+          <span class="col req">الرقم</span><span class="col req">الاسم</span><span class="col req">السجل المدني (رقم الهوية)</span></div>
+        <div class="cols-row"><span class="cols-lbl">اختيارية</span>
+          <span class="col">الفئة (معلم / إداري)</span><span class="col">التخصص</span><span class="col">المرتبة</span><span class="col">رقم الوظيفة</span><span class="col">العمل الحالي</span><span class="col">تاريخ المباشرة</span></div>
+        <p class="cols-note">الأعمدة الأساسية لازمة لكل موظف: السجل المدني يربط الموظف بمساءلاته، والرقم يحدد ترتيبه في القوائم والتقارير.</p>
       </div>
       <details class="paste">
         <summary>أو الصق الأعمدة من Excel</summary>
-        <label class="f">سطر لكل موظف: الاسم، الهوية، التخصص، المرتبة، رقم الوظيفة
+        <label class="f">سطر لكل موظف بهذا الترتيب: <b>الاسم، السجل المدني</b>، التخصص، المرتبة، رقم الوظيفة
           <textarea class="bulk" id="bulk" placeholder="يمكن نسخ الأعمدة مباشرة من Excel"></textarea>
         </label>
         <div class="btn-row"><button type="button" class="btn" id="btn-bulk">إضافة إلى القائمة</button></div>
       </details>
-      <p class="hint" id="ta-count" style="margin:10px 0 6px"></p>
+      <div class="ta-bar"><p class="hint" id="ta-count" style="margin:0"></p><button type="button" class="btn danger-o" id="btn-ta-clear" hidden>حذف كل الموظفين</button></div>
       <div class="tscroll" style="max-height:480px"><table class="lt" id="ta-table"></table></div>
     </section>
 
@@ -1364,7 +1359,7 @@ const NAMES = {
 };
 const S = {
   form: store.get('hf.form', 'absence'),
-  set: Object.assign({ gender: 'm', edu: '', school: '', principal: '', start: '06:45', end: '', job: 'معلم', periodFrom: '', countEarly: true, startTeacher: '2026-08-16', startAdmin: '2026-08-11', yearStart: '2026-08-11', terms: [{ name: 'الفصل الدراسي الأول', from: '2026-08-11', to: '2026-11-19' }, { name: 'الفصل الدراسي الثاني', from: '2026-11-29', to: '2027-06-24' }] }, store.get('hf.set', {})),
+  set: Object.assign({ gender: 'm', edu: '', school: '', principal: '', start: '06:45', end: '', job: 'معلم', periodFrom: '', startTeacher: '2026-08-16', startAdmin: '2026-08-11', yearStart: '2026-08-11', terms: [{ name: 'الفصل الدراسي الأول', from: '2026-08-11', to: '2026-11-19' }, { name: 'الفصل الدراسي الثاني', from: '2026-11-29', to: '2027-06-24' }] }, store.get('hf.set', {})),
   emp: { name: '', civil: '', spec: '', level: '', jobno: '', job: 'معلم' },
   doc: { no: '', attach: '', date: todayISO() },
   abs: { date: '', end: '', days: '', noWeekend: true },
@@ -1533,7 +1528,6 @@ function formDeduct(D) {
   const m = Number(x.minutes) || 0;
   const hrs = x.minutes !== '' ? hoursText(m) : '';
   const summary = `${or(x.days, '14mm')} يوم — مجموع التأخر: ${or(x.minutes, '16mm')} دقيقة (${or(hrs, '18mm')} ساعة)`;
-  const i = dateInfo(D.doc.date);
   return `${header(D, false)}${title('قرار حسم غياب مجموع ساعات تأخر وخروج مبكر')}
     ${kv('الإدارة / المدرسة', D.set.school)}${kv('رقم الهوية الوطنية', D.emp.civil)}
     ${grid(['الاسم', 'التخصص', 'المستوى/المرتبة', 'رقم الوظيفة', 'العمل الحالي', 'عدد أيام الغياب'], [...empVals(D), x.absdays])}
@@ -1924,12 +1918,7 @@ $('#btn-export').addEventListener('click', async () => {
   const C = window.__HFC;
   const salt = C.rnd(16);
   const o = await C.aesEnc(await C.pwKey(v.p1, salt), C.enc.encode(JSON.stringify({ app: 'hf', v: 2, set: S.set, teachers, log: LOG, issued: ISSUED, raised: RAISED })));
-  const blob = new Blob([JSON.stringify({ app: 'hf', enc: 1, salt: C.b64u(salt), iv: o.iv, ct: o.ct })], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `نسخة_نماذج_المساءلة_${todayISO()}.json`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  downloadFile(`نسخة_نماذج_المساءلة_${todayISO()}.json`, JSON.stringify({ app: 'hf', enc: 1, salt: C.b64u(salt), iv: o.iv, ct: o.ct }), 'application/json');
   toast('تم حفظ النسخة الاحتياطية');
 });
 $('#btn-import').addEventListener('click', () => $('#file-import').click());
@@ -2006,6 +1995,42 @@ function ask({ title, msg = '', note = '', ok = 'تأكيد', cancel = 'إلغا
     setTimeout(() => (fields ? d.querySelector('[data-fid]') : tone === 'danger' ? $('#ask-no') : $('#ask-ok')).focus(), 30);
   });
 }
+// قائمة اختيار الموظف: تعرض الجميع عند فتحها، وتُرشّح أثناء الكتابة فقط
+(() => {
+  const inp = $('#in-name'); const list = $('#name-list');
+  let filterOn = false; let idx = -1; let items = []; let blurT = null;
+  const close = () => { list.hidden = true; inp.setAttribute('aria-expanded', 'false'); idx = -1; };
+  const open = (all) => {
+    filterOn = !all;
+    const q = filterOn ? inp.value.trim() : '';
+    items = activeT().filter((t) => !q || t.name.includes(q) || (t.civil || '').includes(q));
+    list.innerHTML = items.length ? items.map((t, i) => `<li role="option" data-i="${i}" class="${t.name === inp.value ? 'cur' : ''}"><b>${esc(t.name)}</b><small>${esc(t.civil || '')}</small></li>`).join('')
+      : `<li class="empty">${teachers.length ? 'لا يوجد اسم مطابق' : 'لا يوجد موظفون. أضفهم من الإعدادات.'}</li>`;
+    list.hidden = false; inp.setAttribute('aria-expanded', 'true'); idx = -1;
+    const cur = list.querySelector('.cur'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+  };
+  const pick = (t) => {
+    inp.value = t.name;
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+    inp.dispatchEvent(new Event('change', { bubbles: true }));
+    close();
+  };
+  inp.addEventListener('focus', () => { clearTimeout(blurT); open(true); });
+  inp.addEventListener('click', () => { if (list.hidden) open(true); });
+  inp.addEventListener('input', (e) => { if (e.isTrusted) open(false); });
+  $('#name-arrow').addEventListener('mousedown', (e) => { e.preventDefault(); if (list.hidden) { inp.focus(); open(true); } else close(); });
+  list.addEventListener('mousedown', (e) => { e.preventDefault(); const li = e.target.closest('li[data-i]'); if (li) pick(items[Number(li.dataset.i)]); });
+  inp.addEventListener('keydown', (e) => {
+    if (list.hidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { open(true); return; }
+    const lis = [...list.querySelectorAll('li[data-i]')];
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault(); idx = (idx + (e.key === 'ArrowDown' ? 1 : -1) + lis.length) % lis.length;
+      lis.forEach((li, i) => li.classList.toggle('on', i === idx)); if (lis[idx]) lis[idx].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && !list.hidden && idx >= 0) { e.preventDefault(); pick(items[idx]); }
+    else if (e.key === 'Escape') close();
+  });
+  inp.addEventListener('blur', () => { clearTimeout(blurT); blurT = setTimeout(close, 120); });
+})();
 $('#in-name').addEventListener('change', () => {
   const t = teachers.find((x) => x.name === S.emp.name);
   if (!t) return;
@@ -2184,11 +2209,6 @@ function logRecord(form, D) {
   if (i >= 0) { ['cls', 'reason', 'note', 'perm'].forEach((k) => { if (LOG[i][k] != null) r[k] = LOG[i][k]; }); r.id = LOG[i].id; r.created = LOG[i].created; LOG[i] = r; } else { r.id = uid(); r.created = Date.now(); LOG.push(r); }
   return r;
 }
-function issuedMax(key) {
-  let mx = null;
-  ISSUED.forEach((x) => { if (x.key === key && inPeriod(x.date) && (mx == null || x.tier > mx)) mx = x.tier; });
-  return mx;
-}
 // مجموع كل موظف وسلّم إجراءاته خلال فترة (من/إلى)
 let RAISED = store.get('hf.raised', []);
 function buildTotals(from, to) {
@@ -2333,7 +2353,18 @@ const avColor = (k) => AV[[...String(k)].reduce((a, ch) => a + ch.charCodeAt(0),
 const avatar = (name) => `<span class="av" style="background:${avColor(name)}">${esc(String(name).trim().charAt(0))}</span>`;
 const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const dmy = (iso) => (iso ? iso.split('-').reverse().join('/') : '');
-const daysTxt = (n) => (n === 1 ? 'يوم' : n === 2 ? 'يومان' : n <= 10 ? `${n} أيام` : `${n} يوماً`);
+function daysWord(n) { return n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? `${n} أيام` : `${n} يوماً`; }
+// تنزيل ملف من داخل المتصفح (نسخة احتياطية أو Excel)
+function downloadFile(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+const csvCell = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+const csvText = (rows) => '\ufeff' + rows.map((l) => l.map(csvCell).join(',')).join('\r\n');
+const daysTxt = (n) => (n === 1 ? 'يوم' : daysWord(n));
 const staffTxt = (n) => (n === 1 ? 'موظف واحد' : n === 2 ? 'موظفان' : n <= 10 ? `${n} موظفين` : `${n} موظفاً`);
 const daysAgo = (iso) => Math.max(0, Math.round((parseISO(todayISO()) - parseISO(iso)) / 86400000));
 const ageTxt = (iso) => { const a = daysAgo(iso); return a === 0 ? 'اليوم' : a === 1 ? 'منذ يوم' : a === 2 ? 'منذ يومين' : `منذ ${a} ${a <= 10 ? 'أيام' : 'يوماً'}`; };
@@ -2672,13 +2703,7 @@ $('#btn-csv').addEventListener('click', () => {
   }
   rows.sort((a, c) => a.date.localeCompare(c.date));
   if (!rows.length) { toast('لا توجد سجلات للتصدير'); return; }
-  const cell = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
-  const csv = '\ufeff' + [head, ...rows.map(map)].map((l) => l.map(cell).join(',')).join('\r\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  a.download = `سجل_${LF.tab === 'absence' ? 'الغياب' : LF.tab === 'late' ? 'التأخر' : 'الانصراف'}_${todayISO()}.csv`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  downloadFile(`سجل_${LF.tab === 'absence' ? 'الغياب' : LF.tab === 'late' ? 'التأخر' : 'الانصراف'}_${todayISO()}.csv`, csvText([head, ...rows.map(map)]), 'text/csv;charset=utf-8');
 });
 $('#btn-newperiod').addEventListener('click', async () => {
   if (!(await ask({ tone: 'warn', title: 'بدء فترة احتساب جديدة', msg: `ستبدأ فترة الاحتساب من اليوم <b>${dmy(todayISO())}</b>، وتُصفَّر مجاميع الدقائق والإجراءات المستحقة.`, note: 'السجل القديم يبقى محفوظاً ويظهر في التقارير.', ok: 'بدء فترة جديدة' }))) return;
@@ -2687,7 +2712,6 @@ $('#btn-newperiod').addEventListener('click', async () => {
 
 // ================= تبويب الإجراءات =================
 const AC = { from: null, to: '', emp: '', preset: 'all' };
-const daysWord = (n) => (n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? `${n} أيام` : `${n} يوماً`);
 function acList() {
   if (AC.from == null) { [AC.from, AC.to] = presetRange('all'); AC.preset = 'all'; }
   const tot = buildTotals(AC.from, AC.to);
@@ -2740,7 +2764,6 @@ function renderActions() {
 
   // الغياب بدون عذر
   const AB = absDedList();
-  const abPend = AB.filter((e) => e.due.length);
   $('#ac-abs').innerHTML = AB.length ? `<thead><tr><th>م</th><th>الاسم</th><th>أيام الغياب</th><th>تستحق الحسم</th><th>بانتظار العذر</th><th>حُسمت</th><th></th></tr></thead><tbody>${AB.map((e, i) => `<tr data-akey="${esc(e.key)}">
       <td class="num">${i + 1}</td><td>${nameCell({ emp: e.emp, key: e.key })}</td>
       <td class="det" style="font-size:12.5px">${e.rows.map((x) => `<span class="adday ${x.st}">${esc(x.label)}</span>`).join(' ')}</td>
@@ -2817,7 +2840,7 @@ function absDedList() {
     if (!inR(a) && !inR(z)) return;
     const late = !r.cls && daysAgo(z) >= ABS_GRACE;
     const st = r.dedDone ? 'done' : r.cls === 'بدون عذر' || late ? 'due' : 'wait';
-    const n = absDates(r).length || 1;
+    const n = absD(r); // نفس عدد الأيام المسجّل في المساءلة
     const e = m.get(r.key) || { key: r.key, emp: r.emp, rows: [], due: [], dueDays: 0, waitDays: 0, doneDays: 0, waitNote: '' };
     const label = (a === z ? dmy(a) : `${dmy(a)} ← ${dmy(z)}`) + (st === 'due' && !r.cls ? ' (بلا عذر)' : '');
     e.rows.push({ id: r.id, st, label, a, z, n, r });
@@ -2910,15 +2933,9 @@ $('#ac-csv').addEventListener('click', () => {
   const P = acList().filter((e) => e.cur != null || e.steps.some((x) => x.done));
   if (!P.length) { toast('لا توجد بيانات للتصدير'); return; }
   const head = ['م', 'الاسم', 'رقم الهوية', 'مجموع التأخر (د)', 'مجموع الغياب (أيام)', 'الدرجة الحالية', 'نوع الإجراء', 'الحد', 'الدرجات المنفّذة', 'الإجراء التالي', 'إجراءات مستحقة', 'أيام الحسم المعادلة', 'أيام حسم لم تُرفع', 'الحالة'];
-  const cell = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
   const rows = P.map((e, i) => [i + 1, e.emp.name, e.emp.civil, e.mins, e.absDays, e.cur != null ? e.cur + 1 : '', e.cur != null ? TIERS[e.cur].act : '', e.cur != null ? STEP_TH[e.cur] : '',
     e.steps.filter((x) => x.done).map((x) => x.step).join('، '), e.due != null ? `(${e.due + 1}) ${TIERS[e.due].act}` : '', e.pendingCount, e.lateDed || '', e.lateRaise || '', e.pending ? 'مستحق' : 'مكتمل']);
-  const csv = '\ufeff' + [head, ...rows].map((l) => l.map(cell).join(',')).join('\r\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  a.download = `كشف_الإجراءات_${todayISO()}.csv`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  downloadFile(`كشف_الإجراءات_${todayISO()}.csv`, csvText([head, ...rows]), 'text/csv;charset=utf-8');
 });
 $('#ac-print').addEventListener('click', () => { const h = repActions(AC.from, AC.to, AC.emp); if (h) printPages(h, 'كشف الإجراءات'); });
 
@@ -2933,7 +2950,6 @@ const clsTxt = (r) => r.cls || 'لم يُصنَّف';
 const typeTxt = (r) => (r.form === 'absence' ? 'غياب' : [hasLate(r) && 'تأخر', r.data.dev && r.data.dev.goneOn && 'عدم تواجد', r.data.dev && r.data.dev.earlyOn && 'انصراف مبكر', r.data.dev && r.data.dev.otherOn && 'موقع آخر'].filter(Boolean).join(' + ') || 'تأخر/انصراف');
 const rpStats = (items) => `<div class="rp-stats">${items.map(([v, l, t]) => `<div class="${t || ''}"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`;
 const rpTable = (heads, rows, foot = '') => `<table class="rt"><thead><tr>${heads.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody>${foot ? `<tfoot>${foot}</tfoot>` : ''}</table>`;
-const rpBar = (parts) => { const t = parts.reduce((a, p) => a + p[2], 0) || 1; return `<div class="rp-bar">${parts.map(([c, , n]) => (n ? `<i class="${c}" style="width:${(n / t) * 100}%"></i>` : '')).join('')}</div><div class="rp-lg">${parts.map(([c, l, n]) => `<span><i class="${c}"></i>${l}: ${n}</span>`).join('')}</div>`; };
 const latinDigits = (h) => h.replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 function rpPage(subj, ttl, body, sub, emp) {
   const D = { ...S, doc: { ...S.doc, no: '', date: todayISO() } };
@@ -3168,8 +3184,7 @@ function renderSettings() {
   $('#acct-info').innerHTML = `المدرسة: <b>${esc(U.sc || '')}</b> · المستخدم: <b dir="ltr">${esc(U.u || '')}</b> · الصلاحية: <b>${U.role === 'view' ? 'اطلاع فقط' : 'كاملة'}</b>${U.exp ? ` · التفعيل حتى <b>${dmy(U.exp)}</b>` : ''}<br>البيانات مشفّرة على هذا المتصفح، ويُقفل التطبيق تلقائياً بعد 30 دقيقة دون استخدام.`;
   syncInputs();
   renderEmpForm(); renderEmpTable(); renderTerms();
-  const n = [LOG.length, ISSUED.length, 0, teachers.length];
-  $('#bk-info').textContent = `المحفوظ الآن: ${teachers.length} موظف، ${n[0]} مساءلة في السجل، ${n[1]} إجراء منفّذ.`;
+  $('#bk-info').textContent = `المحفوظ الآن: ${teachers.length} موظف، ${LOG.length} مساءلة في السجل، ${ISSUED.length} إجراء منفّذ.`;
 }
 document.addEventListener('click', (e) => { const a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); go(a.dataset.go); } });
 
@@ -3195,8 +3210,10 @@ function renderEmpTable() {
   const el = $('#ta-table'); if (!el) return;
   const act = activeT().length;
   const adm = teachers.filter((t) => t.role === 'إداري').length;
-  $('#ta-count').textContent = teachers.length ? `العدد: ${teachers.length} (النشطون: ${act}) · معلمون ${teachers.length - adm}، إداريون ${adm}` : '';
-  el.innerHTML = teachers.length ? `<thead><tr><th>الرقم</th><th>الاسم</th><th>رقم الهوية</th><th>الفئة</th><th>العمل الحالي</th><th>المباشرة</th><th>نشط</th><th></th></tr></thead><tbody>${teachers.map((t, i) => {
+  const miss = teachers.filter((t) => !t.civil || !t.num).length;
+  $('#ta-count').innerHTML = teachers.length ? `العدد: ${teachers.length} (النشطون: ${act}) · معلمون ${teachers.length - adm}، إداريون ${adm}${miss ? ` · <b style="color:#b91c1c">${miss} بلا رقم أو سجل مدني</b>` : ''}` : '';
+  $('#btn-ta-clear').hidden = !teachers.length;
+  el.innerHTML = teachers.length ? `<thead><tr><th>الرقم</th><th>الاسم</th><th>السجل المدني</th><th>الفئة</th><th>العمل الحالي</th><th>المباشرة</th><th>نشط</th><th></th></tr></thead><tbody>${teachers.map((t, i) => {
     const role = t.role === 'إداري' ? 'إداري' : 'معلم';
     const eff = effStart(t);
     return `<tr data-i="${i}" class="${t.active === false ? 'inact' : ''}">
@@ -3228,6 +3245,13 @@ $('#btn-ta-save').addEventListener('click', () => {
   saveTeachers(); taReset(); toast(msg);
 });
 $('#btn-ta-cancel').addEventListener('click', taReset);
+$('#btn-ta-clear').addEventListener('click', async () => {
+  if (!teachers.length) return;
+  if (!(await ask({ tone: 'danger', title: 'حذف كل الموظفين', msg: `سيُحذف <b>${teachers.length}</b> موظف من قائمة الموظفين دفعة واحدة.`, note: 'سجل المساءلات والإجراءات يبقى كما هو. لا يمكن التراجع، فاحفظ نسخة احتياطية أولاً إن احتجت القائمة.', ok: 'حذف الكل' }))) return;
+  const n = teachers.length;
+  teachers.splice(0, teachers.length); picked.clear(); taReset(); saveTeachers();
+  toast(`حُذف ${n} موظف`);
+});
 $('#ta-table').addEventListener('click', async (e) => {
   const tr = e.target.closest('tr[data-i]'); if (!tr) return;
   const i = Number(tr.dataset.i); const t = teachers[i]; if (!t) return;
@@ -3328,7 +3352,8 @@ $('#ta-file').addEventListener('change', async (e) => {
       if (i >= 0) { teachers[i] = { ...teachers[i], ...clean }; upd++; } else { teachers.push({ active: true, ...rec }); added++; }
     });
     saveTeachers();
-    toast(`استيراد: ${added} جديد${upd ? `، و${upd} حُدِّث` : ''}`);
+    const miss = list.filter((x) => !x.civil || !x.num).length;
+    toast(`استيراد: ${added} جديد${upd ? `، و${upd} حُدِّث` : ''}${miss ? ` · ${miss} بلا رقم أو سجل مدني` : ''}`, miss ? 'warn' : 'ok');
   } catch (err) { toast(err.message || 'تعذّر قراءة الملف'); }
 });
 
@@ -3471,11 +3496,119 @@ function lateEarlyTop(R) {
   R.forEach((r) => { if (r.form !== 'latedep') return; const e = g.get(r.key) || { key: r.key, name: r.emp.name || r.key, late: 0, early: 0 }; e.late += r.lateMins || 0; e.early += depMins(r); g.set(r.key, e); });
   return [...g.values()].filter((e) => e.late + e.early).sort((a, b) => (b.late + b.early) - (a.late + a.early)).slice(0, 9);
 }
+// ================= تحليل موظف واحد =================
+const EA_CSS = `
+.ea{background:#fff;color:#1f2937;font-family:inherit}
+.ea *{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box}
+.ea-hd{background:#5f6368;color:#fff;text-align:center;padding:14px 16px;font-size:24px;font-weight:700;letter-spacing:.2px}
+.ea-sub{background:#f1f3f4;color:#4b5563;padding:8px 16px;font-size:14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ea-charts{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:18px 4px 10px}
+.ea-charts h4{margin:0 0 6px;font-size:14.5px;font-weight:700}
+.ea-svg{display:block;width:100%;height:auto}
+.ea-hr{border:0;border-top:1.5px solid #555;margin:6px 0}
+.ea-stats{display:grid;grid-template-columns:repeat(3,1fr)}
+.ea-stats>div{text-align:center;padding:12px 6px 10px;border-inline-start:1px dotted #9ca3af;border-bottom:1px dotted #9ca3af}
+.ea-stats>div:nth-child(3n+1){border-inline-start:0}
+.ea-stats>div:nth-last-child(-n+3){border-bottom:0}
+.ea-stats span{display:block;font-size:13px;color:#6b7280}
+.ea-stats b{display:block;font-size:34px;font-weight:800;line-height:1.25;font-variant-numeric:tabular-nums;color:#111}
+.ea-stats b small{font-size:16px;font-weight:600;color:#4b5563;margin-inline-start:4px}
+.ea-tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px}
+.ea-tbl th{font-weight:700;padding:9px 8px;border:1px solid #d9dce0;background:#fff}
+.ea-tbl td{padding:7px 8px;border:1px solid #e3e5e8;text-align:center;font-variant-numeric:tabular-nums}
+.ea-tbl tbody tr:nth-child(even) td{background:#f1f3f4}
+.ea-tbl td:first-child{font-weight:700}
+.ea-tbl td.tx{text-align:start}
+.ea-tbl thead{display:table-header-group}
+.ea-tbl tr{break-inside:avoid}
+.ea-none{padding:30px;text-align:center;color:#6b7280}
+@media (max-width:700px){ .ea-charts{grid-template-columns:1fr} .ea-stats b{font-size:26px} .ea-hd{font-size:19px} }
+`;
+const eaFmtD = (iso) => { const [y, m, d] = iso.split('-'); return `${y}/${Number(m)}/${Number(d)}`; };
+// رسم أعمدة بحسب التاريخ
+function eaBars(pts, color, unit) {
+  const W = 470; const H = 270; const L = 50; const R = 10; const T = 18; const B = 46;
+  const pw = W - L - R; const ph = H - T - B;
+  const mx = niceMax(Math.max(1, ...pts.map((p) => p.v)) / 4) * 4;
+  const y = (v) => T + ph - (v / mx) * ph;
+  const gw = pw / Math.max(pts.length, 1); const bw = Math.min(18, gw * 0.55);
+  const ticks = [0, 1, 2, 3, 4].map((i) => (mx / 4) * i);
+  const step = Math.max(1, Math.ceil(pts.length / 5));
+  return `<svg viewBox="0 0 ${W} ${H}" class="ea-svg" direction="ltr" role="img">
+    ${ticks.map((t) => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="#c9ccd1" stroke-dasharray="2 3"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="#374151">${Math.round(t)}</text>`).join('')}
+    ${pts.map((p, i) => { const x = L + gw * i + gw / 2; return `<rect x="${(x - bw / 2).toFixed(1)}" y="${y(p.v).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0, T + ph - y(p.v)).toFixed(1)}" rx="${(bw / 2).toFixed(1)}" fill="${color}"><title>${eaFmtD(p.d)}: ${p.v} ${unit}</title></rect>`
+      + ((i % step === 0 && pts.length - 1 - i >= step) || i === pts.length - 1 ? `<text x="${x.toFixed(1)}" y="${H - B + 18}" text-anchor="${i === pts.length - 1 && pts.length > 1 ? 'end' : i === 0 && pts.length > 1 ? 'start' : 'middle'}" font-size="11" fill="#374151">${eaFmtD(p.d)}</text>` : ''); }).join('')}
+    <line x1="${L}" x2="${W - R}" y1="${T + ph}" y2="${T + ph}" stroke="#6b7280"/></svg>`;
+}
+// خط تراكمي مع حدود الإجراءات
+function eaLine(pts, color) {
+  const W = 470; const H = 270; const L = 50; const R = 10; const T = 18; const B = 46;
+  const pw = W - L - R; const ph = H - T - B;
+  const last = pts.length ? pts[pts.length - 1].v : 0;
+  const mx = niceMax(Math.max(30, last) / 4) * 4;
+  const y = (v) => T + ph - (v / mx) * ph;
+  const n = Math.max(pts.length - 1, 1);
+  const x = (i) => (pts.length === 1 ? L + pw / 2 : L + 8 + ((pw - 16) * i) / n);
+  const ticks = [0, 1, 2, 3, 4].map((i) => (mx / 4) * i);
+  const tiers = TIERS.filter((t) => !t.repeat && t.min <= mx).map((t, i) => `<line x1="${L}" x2="${W - R}" y1="${y(t.min)}" y2="${y(t.min)}" stroke="#dc2626" stroke-opacity=".35" stroke-dasharray="5 4"/><text x="${W - R - 2}" y="${y(t.min) - 3}" text-anchor="end" font-size="9.5" fill="#b91c1c">(${i + 1}) ${t.min}</text>`).join('');
+  const step = Math.max(1, Math.ceil(pts.length / 5));
+  return `<svg viewBox="0 0 ${W} ${H}" class="ea-svg" direction="ltr" role="img">
+    ${ticks.map((t) => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="#c9ccd1" stroke-dasharray="2 3"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="#374151">${Math.round(t)}</text>`).join('')}
+    ${tiers}
+    ${pts.length > 1 ? `<polyline points="${pts.map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ')}" fill="none" stroke="${color}" stroke-width="3" stroke-linejoin="round"/>` : ''}
+    ${pts.map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="4.5" fill="#fff" stroke="${color}" stroke-width="2.5"><title>${eaFmtD(p.d)}: ${p.v} دقيقة</title></circle>`
+      + ((i % step === 0 && pts.length - 1 - i >= step) || i === pts.length - 1 ? `<text x="${x(i).toFixed(1)}" y="${H - B + 18}" text-anchor="${i === pts.length - 1 && pts.length > 1 ? 'end' : i === 0 && pts.length > 1 ? 'start' : 'middle'}" font-size="11" fill="#374151">${eaFmtD(p.d)}</text>` : '')).join('')}
+    <line x1="${L}" x2="${W - R}" y1="${T + ph}" y2="${T + ph}" stroke="#6b7280"/></svg>`;
+}
+function empAnalysisHTML(key, from, to) {
+  const R = recsIn(from, to, key).slice().sort((a, b) => a.date.localeCompare(b.date));
+  const name = empNameOf(key);
+  const per = `${from ? dmy(from) : 'بداية السجل'} – ${to ? dmy(to) : dmy(todayISO())}`;
+  const sc = S.set.school ? 'مدرسة ' + S.set.school : '';
+  const head = `<div class="ea-hd">سجل انضباط: ${esc(name)}</div><div class="ea-sub"><span>${esc(per)}</span><span>${esc(sc)}</span></div>`;
+  if (!R.length) return `<style>${EA_CSS}</style><div class="ea">${head}<p class="ea-none">لا توجد سجلات لهذا الموظف في الفترة المختارة.</p></div>`;
+  const L = R.filter(hasLate); const P = R.filter(hasEarly); const A = R.filter((r) => r.form === 'absence');
+  const lateM = L.reduce((s0, r) => s0 + (r.lateMins || 0), 0);
+  const depM = P.reduce((s0, r) => s0 + depMins(r), 0);
+  const maxL = L.reduce((m, r) => Math.max(m, r.lateMins || 0), 0);
+  const avgL = L.length ? Math.round(lateM / L.length) : 0;
+  const absDays = sumDays(A);
+  const t = buildTotals(from, to).get(key);
+  const cur = t && t.cur != null ? TIERS[t.cur].act : 'لا يوجد';
+  // رسم ١: أعمدة دقائق التأخر لكل حالة. رسم ٢: التراكم مع حدود الإجراءات
+  const lateByDay = new Map();
+  L.forEach((r) => lateByDay.set(r.date, (lateByDay.get(r.date) || 0) + (r.perm === 'مقبول' ? 0 : r.lateMins)));
+  const bars = [...lateByDay.entries()].map(([d, v]) => ({ d, v }));
+  let acc = 0; const cum = bars.map((p) => ({ d: p.d, v: (acc += p.v) }));
+  const charts = bars.length
+    ? `<div class="ea-charts"><div><h4>دقائق التأخر لكل يوم</h4>${eaBars(bars, '#29abe2', 'دقيقة')}</div><div><h4>تراكم دقائق التأخر وحدود الإجراءات</h4>${eaLine(cum, '#f7a541')}</div></div>`
+    : `<div class="ea-charts"><div><h4>دقائق التأخر لكل يوم</h4><p class="ea-none">لا يوجد تأخر</p></div><div><h4>الانصراف المبكر وعدم التواجد</h4>${P.length ? eaBars(P.map((r) => ({ d: r.date, v: depMins(r) })), '#7c3aed', 'دقيقة') : '<p class="ea-none">لا يوجد</p>'}</div></div>`;
+  const stat = (lbl, v, unit = '') => `<div><span>${lbl}</span><b>${v}${unit ? `<small>${unit}</small>` : ''}</b></div>`;
+  const stats = `<div class="ea-stats">
+    ${stat('إجمالي دقائق التأخر', lateM, 'د')}${stat('متوسط التأخر', avgL, 'د')}${stat('أطول تأخر', maxL, 'د')}
+    ${stat('أيام الغياب', absDays, 'يوم')}${stat('الانصراف المبكر وعدم التواجد', depM, 'د')}${stat('الدرجة الحالية', `<span style="font-size:20px;color:#111;display:inline">${esc(cur)}</span>`)}
+  </div>`;
+  const rows = R.map((r) => {
+    const i = dateInfo(r.date) || {};
+    const d = r.data.dev || {};
+    const det = r.form === 'absence' ? (r.end ? `حتى ${dmy(r.end)}` : 'يوم واحد') : [r.lateMins ? `حضر ${fmtTime(d.arrive)}` : '', d.earlyOn ? `انصرف ${fmtTime(d.earlyAt)}` : '', d.goneOn ? `خارج ${fmtTime(d.goneFrom)}-${fmtTime(d.goneTo)}` : ''].filter(Boolean).join(' · ');
+    const dur = r.form === 'absence' ? daysTxt(absD(r)) : `${(r.lateMins || 0) + depMins(r)} د`;
+    const note = [r.form === 'absence' ? (r.cls || 'لم يُصنَّف') : '', r.reason, r.perm ? `استئذان ${r.perm}` : '', r.note].filter(Boolean).join(' · ');
+    return `<tr><td>${eaFmtD(r.date)}</td><td>${esc(i.day || '')}</td><td>${esc(typeTxt(r))}</td><td>${esc(det || '—')}</td><td>${esc(dur)}</td><td class="tx">${esc(note)}</td></tr>`;
+  }).join('');
+  const table = `<table class="ea-tbl"><thead><tr><th>التاريخ</th><th>اليوم</th><th>النوع</th><th>الوقت / التفاصيل</th><th>المدة</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<style>${EA_CSS}</style><div class="ea">${head}${charts}<hr class="ea-hr">${stats}<hr class="ea-hr">${table}</div>`;
+}
+
 function renderAnalytics() {
   if (AN.from == null) { [AN.from, AN.to] = presetRange('all'); AN.preset = 'all'; }
   $('#an-from').value = AN.from; $('#an-to').value = AN.to;
   injectTerms('#an-quick');
   $$('#an-quick button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === AN.preset)));
+  const keys = [...new Set(LOG.map((r) => r.key))].sort((a, b) => empNameOf(a).localeCompare(empNameOf(b), 'ar'));
+  $('#an-emp').innerHTML = '<option value="">جميع الموظفين</option>' + keys.map((k) => `<option value="${esc(k)}"${AN.emp === k ? ' selected' : ''}>${esc(empNameOf(k))}</option>`).join('');
+  $('#an-one').hidden = !AN.emp; $('#an-all').hidden = !!AN.emp;
+  if (AN.emp) { $('#an-one-body').innerHTML = empAnalysisHTML(AN.emp, AN.from, AN.to); return; }
   const R = recsIn(AN.from, AN.to, '');
   const A = R.filter((r) => r.form === 'absence'); const L = R.filter(hasLate); const P = R.filter(hasEarly);
   const early = P.filter((r) => r.data.dev.earlyOn); const gone = P.filter((r) => r.data.dev.goneOn);
@@ -3552,9 +3685,12 @@ function renderAnalytics() {
 $('#an-quick').addEventListener('click', (e) => { const b = e.target.closest('button[data-p]'); if (!b) return; AN.preset = b.dataset.p; [AN.from, AN.to] = presetRange(AN.preset); renderAnalytics(); });
 $('#an-from').addEventListener('input', (e) => { AN.from = e.target.value; AN.preset = ''; renderAnalytics(); });
 $('#an-to').addEventListener('input', (e) => { AN.to = e.target.value; AN.preset = ''; renderAnalytics(); });
+$('#an-emp').addEventListener('change', (e) => { AN.emp = e.target.value; renderAnalytics(); window.scrollTo(0, 0); });
+$('#an-one-back').addEventListener('click', () => { AN.emp = ''; renderAnalytics(); });
+$('#an-one-print').addEventListener('click', () => { printPages(`<div class="page">${empAnalysisHTML(AN.emp, AN.from, AN.to)}</div>`, `تحليل ${empNameOf(AN.emp)}`); });
 $('#view-analytics').addEventListener('click', (e) => {
   const s0 = e.target.closest('[data-staff]');
-  if (s0) { printPages(repStaff(AN.from, AN.to, s0.dataset.staff), 'تقرير الموظف'); return; }
+  if (s0) { AN.emp = s0.dataset.staff; renderAnalytics(); window.scrollTo(0, 0); return; }
   if (e.target.closest('#an-classify')) { e.preventDefault(); LF.tab = 'absence'; LF.cls = '__unc'; LF.view = 'table'; LF.teacher = ''; go('log'); }
 });
 
