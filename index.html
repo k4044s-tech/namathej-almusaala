@@ -424,6 +424,10 @@ button.ladder-dot:hover{transform:scale(1.12)}
 .st-pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
 .st-pill.bad{background:#fee2e2;color:#b91c1c}
 .st-pill.wait{background:#fff7ed;color:#c2410c}
+.st-pill.ok{background:#dcfce7;color:#166534}
+table.lt input.f-why{min-height:36px;border:1px solid #c9d3d1;border-radius:7px;padding:4px 8px;font:inherit;font-size:13px;background:#fff;color:var(--ink);width:170px}
+.fr-wait{font-size:12px;color:#c2410c}
+.fr-perm{font-size:13px;color:#1e4e79}
 .okline{margin:0;color:#15803d;font-size:14px}
 @media (max-width:900px){
   .acf{grid-template-columns:1fr 1fr}
@@ -438,6 +442,17 @@ button.ladder-dot:hover{transform:scale(1.12)}
 .rp-f-body{flex:1 1 300px}
 .rp-f-body h3{margin:0 0 4px;font-size:17px}
 .rp-f-body p{margin:0;font-size:13.5px;color:var(--muted)}
+.side .nav.has-due{position:relative}
+.side .nav.has-due::after{content:"";position:absolute;top:8px;inset-inline-end:8px;width:9px;height:9px;border-radius:50%;background:#f59e0b}
+.rp-stat{background:linear-gradient(135deg,#eef4fb 0%,#fff 75%);border-color:#c5d6ea}
+.rp-stat .rp-f-ic{background:#1e4e79}
+.rp-f-body h3 small{font-size:12.5px;font-weight:500;color:var(--muted)}
+.as-due{margin:8px 0 0!important;color:#9a3412!important;font-weight:600}
+.as-meta{margin-top:8px;font-size:13px}
+.as-meta summary{cursor:pointer;color:#1e4e79;font-weight:600}
+.as-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;margin-top:4px}
+.as-count{font-size:12.5px;color:var(--muted);align-self:center}
+@media (max-width:600px){ .as-grid{grid-template-columns:1fr} }
 .rp-f-act{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
 .rp-f-act .f{margin:0}
 .rp-f-act .btn{min-height:42px}
@@ -1147,6 +1162,21 @@ body:not(.locked) #gate{display:none}
       </div>
     </div>
 
+    <div class="rp-featured rp-stat" id="as-card">
+      <div class="rp-f-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 3h11l5 5v13H4z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></div>
+      <div class="rp-f-body">
+        <h3>إحصائية الموظفين الغائبين <small>للإدارة العامة للتعليم</small></h3>
+        <p>ملف Excel بأعمدة نموذج الإدارة: كل يوم غياب في صف مع الإجراء (مساءلة غياب أو حسم) والرفع في فارس وسببه، ثم من بلغ 420 دقيقة تأخير في صفوف مستقلة.</p>
+        <p class="as-due" id="as-due" hidden></p>
+      </div>
+      <div class="rp-f-act">
+        <label class="f">من تاريخ<input type="date" id="as-from"></label>
+        <label class="f">إلى تاريخ<input type="date" id="as-to"></label>
+        <button type="button" class="btn primary" id="btn-as">تصدير Excel</button>
+        <span class="as-count" id="as-count"></span>
+      </div>
+    </div>
+
     <section class="card">
       <h3>فترة التقارير أدناه</h3>
       <div class="acf">
@@ -1200,6 +1230,13 @@ body:not(.locked) #gate{display:none}
       <p class="hint">تظهر في ترويسة كل النماذج. اتركها فارغة لتُطبع بفراغ منقّط.</p>
       <label class="f">اسم المدرسة<input data-k="set.school" autocomplete="off" placeholder="يُحفظ لاستخدامه في المرات القادمة"></label>
       <label class="f" id="lbl-principal">اسم مدير المدرسة<input data-k="set.principal" autocomplete="off"></label>
+      <div class="as-grid">
+        <label class="f">المنطقة / المحافظة<input data-k="set.statRegion" autocomplete="off" placeholder="مثال: الرياض"></label>
+        <label class="f">النطاق / الحي<input data-k="set.statDistrict" autocomplete="off" placeholder="مثال: حي النموذج"></label>
+        <label class="f">القطاع<input data-k="set.statSector" autocomplete="off" placeholder="مثال: القطاع الشمالي"></label>
+        <label class="f">المرحلة<input data-k="set.statStage" autocomplete="off" placeholder="مثال: المتوسطة"></label>
+      </div>
+      <p class="hint">تُستخدم في إحصائية الموظفين الغائبين المرسلة للإدارة.</p>
         </section>
 
     <section class="card" id="emp-card">
@@ -2131,7 +2168,11 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const saveLog = () => { store.set('hf.log', LOG); store.set('hf.issued', ISSUED); store.set('hf.raised', RAISED); };
 const periodStart = () => S.set.periodFrom || S.set.yearStart || '';
 const inPeriod = (date) => !periodStart() || date >= periodStart();
-const actMins = (r) => (r.perm === 'مقبول' ? 0 : r.lateMins || 0);
+// الاستئذان المقبول: انتداب أو مهمة عمل أو تدريب ('مقبول' للسجلات القديمة)
+const PERM_OK = ['انتداب', 'مهمة عمل', 'تدريب', 'مقبول'];
+const permOk = (r) => PERM_OK.includes(r.perm);
+const permTxt = (r) => (permOk(r) ? 'استئذان مقبول' : r.perm === 'مرفوض' ? 'استئذان مرفوض' : r.perm || '');
+const actMins = (r) => (permOk(r) ? 0 : r.lateMins || 0);
 const hm = (m) => hoursText(Math.round(m));
 
 const DEV_COMPS = [['lateOn', 'التأخر'], ['goneOn', 'عدم التواجد'], ['earlyOn', 'الانصراف المبكر'], ['otherOn', 'الحضور من موقع آخر']];
@@ -2227,7 +2268,7 @@ function buildTotals(from, to) {
     if (!inR(r.date)) return;
     const e = map.get(r.key) || { key: r.key, emp: r.emp, mins: 0, late: 0, lateN: 0, dep: 0, depN: 0, gone: 0, absDays: 0, first: '', last: '', upd: 0, recs: [] };
     const m = actMins(r);
-    const ok = r.perm !== 'مقبول';
+    const ok = !permOk(r);
     e.mins += m;
     if (hasLate(r)) { e.lateN++; if (ok) e.late += r.lateMins; }
     if (hasEarly(r)) { e.depN++; if (ok) { e.dep += depMins(r); e.gone += r.goneMins || 0; } }
@@ -2404,7 +2445,7 @@ function dayCell(r, pending) {
   return `<div class="dcell"><b>${i ? esc(i.day) : ''}</b><span>${esc(i ? i.greg.replace(/ /g, '') : r.date)}</span><small>${i ? esc(i.hijri) + ' هـ' : ''}</small>${r.end ? `<small class="rng">حتى ${esc(dmy(r.end))} (${daysTxt(absD(r))})</small>` : ''}${pending ? `<span class="age">${ageTxt(r.date)}</span>` : ''}</div>`;
 }
 const nameCell = (r, extra = '') => `<div class="ncell">${avatar(r.emp.name || r.key)}<div><div>${esc(r.emp.name || r.key)}</div>${extra}</div></div>`;
-const permCell = (r) => `<select class="f-perm ${r.perm === 'مقبول' ? 'ok' : r.perm === 'مرفوض' ? 'no' : ''}" aria-label="الاستئذان">${['', 'مقبول', 'مرفوض'].map((p) => `<option value="${p}"${(r.perm || '') === p ? ' selected' : ''}>${p || '—'}</option>`).join('')}</select>`;
+const permCell = (r) => { const opts = ['', 'انتداب', 'مهمة عمل', 'تدريب']; if (r.perm && !opts.includes(r.perm)) opts.push(r.perm); return `<select class="f-perm ${permOk(r) ? 'ok' : r.perm === 'مرفوض' ? 'no' : ''}" aria-label="الاستئذان">${opts.map((p) => `<option value="${esc(p)}"${p === (r.perm || '') ? ' selected' : ''}>${p ? esc(p) : '—'}</option>`).join('')}</select>`; };
 const mesCell = () => `<div class="mcell"><span class="done">تم ✓</span><button type="button" class="btn pr" data-r="print">طباعة</button><button type="button" class="btn" data-r="open">فتح</button><button type="button" class="btn del" data-r="del">حذف</button></div>`;
 const kpi = (label, val, sub = '', cls = '', color = '') => `<div class="kpi ${cls}"><div class="kl">${label}</div><div class="kv${typeof val === 'string' && !/^[\d:]+$/.test(val) ? ' nm' : ''}"${color ? ` style="color:${color}"` : ''}>${val}</div>${sub ? `<div class="ks">${sub}</div>` : ''}</div>`;
 function distBar(parts) {
@@ -2491,11 +2532,11 @@ function renderAbs(A, c, byT) {
     + kpi('الأكثر غياباً في الفترة', top ? esc(top.n) : '—', top ? daysTxt(top.v) : '');
   $('#dist').innerHTML = distBar([['k-exc', 'بعذر', c.exc], ['k-unx', 'بدون عذر', c.unx], ['k-unc', 'لم يُدخل عذر', c.unc]]);
   $('#lf-chips').innerHTML = chips([['', 'الكل', c.all], ['__unc', 'لم يُدخل عذر', c.unc], ['بعذر', 'بعذر', c.exc], ['بدون عذر', 'بدون عذر', c.unx]], LF.cls);
-  $('#tb-hint').textContent = LF.view === 'table' ? 'التصنيف يُحفظ فوراً بمجرد الضغط · اختيار سبب إجازة يجعل الغياب «بعذر» تلقائياً · الملاحظة تُحفظ عند الخروج من الحقل' : '';
+  $('#tb-hint').textContent = LF.view === 'table' ? 'التصنيف يُحفظ فوراً بمجرد الضغط · اختيار سبب إجازة يجعل الغياب «بعذر» تلقائياً · الرفع في فارس يُحدَّد من التصنيف: بعذر = نعم · استئذان (انتداب، مهمة عمل، تدريب) = لا وسببه نوع الاستئذان · بدون عذر = لا، ويتحول إلى حسم بعد 5 أيام بلا عذر · سبب عدم الرفع يُحفظ عند الخروج من الحقل' : '';
   if (LF.view === 'table') {
     const rows = A.filter((r) => byT(r) && (LF.cls === '' || (LF.cls === '__unc' ? !r.cls : r.cls === LF.cls))).sort((a, b) => b.date.localeCompare(a.date));
     const allOn = rows.length && rows.every((r) => SEL.has(r.id));
-    $('#lt').innerHTML = rows.length ? `<thead><tr><th class="ck"><input type="checkbox" id="sel-all" aria-label="تحديد الكل"${allOn ? ' checked' : ''}></th><th>اليوم</th><th>الموظف</th><th>التصنيف</th><th>السبب</th><th>ملاحظات</th><th>الاستئذان</th><th>المساءلة</th></tr></thead><tbody>${rows.map((r) => {
+    $('#lt').innerHTML = rows.length ? `<thead><tr><th class="ck"><input type="checkbox" id="sel-all" aria-label="تحديد الكل"${allOn ? ' checked' : ''}></th><th>اليوم</th><th>الموظف</th><th>التصنيف</th><th>السبب</th><th>الرفع في فارس</th><th>سبب عدم الرفع</th><th>الاستئذان</th><th>المساءلة</th></tr></thead><tbody>${rows.map((r) => {
       const pending = !r.cls;
       const list = r.reason && !ABS_REASONS.includes(r.reason) ? [r.reason, ...ABS_REASONS] : ABS_REASONS;
       return `<tr data-id="${r.id}" class="${pending ? 'pend' : r.cls === 'بعذر' ? 'exc' : 'unx'}">
@@ -2504,7 +2545,11 @@ function renderAbs(A, c, byT) {
         <td>${nameCell(r, pending ? '<span class="ptag">لم يُدخل عذر</span>' : '')}</td>
         <td><div class="cseg" role="group" aria-label="التصنيف"><button type="button" data-set="بعذر" class="${r.cls === 'بعذر' ? 'on' : ''}">بعذر</button><button type="button" data-set="بدون عذر" class="${r.cls === 'بدون عذر' ? 'on' : ''}">بدون عذر</button></div></td>
         <td><select class="f-reason" aria-label="السبب">${['', ...list].map((x) => `<option value="${esc(x)}"${x === (r.reason || '') ? ' selected' : ''}>${esc(x) || '— بدون سبب —'}</option>`).join('')}</select></td>
-        <td><input class="f-note" type="text" value="${esc(r.note || '')}" placeholder="ملاحظة..." aria-label="ملاحظة"></td>
+        ${(() => { const fs = farisOf(r); const left = ABS_GRACE - daysAgo(absRange(r)[1]);
+          return fs === 'yes' ? '<td><span class="st-pill ok">نعم</span></td><td>—</td>'
+            : permOk(r) ? `<td><span class="st-pill bad">لا</span></td><td><b class="fr-perm">${esc(permWhy(r))}</b></td>`
+            : absIsDed(r) ? `<td><span class="st-pill bad">لا</span></td><td><input class="f-why" type="text" value="${esc(r.farisWhy || '')}" placeholder="${esc(farisWhyDef(r))}" aria-label="سبب عدم الرفع"></td>`
+            : `<td><span class="st-pill bad">لا</span></td><td><span class="fr-wait">بانتظار العذر — متبقٍ ${daysWord(Math.max(1, left))}</span></td>`; })()}
         <td>${permCell(r)}</td>
         <td>${mesCell()}</td></tr>`;
     }).join('')}</tbody>` : emptyRow(A.length);
@@ -2532,7 +2577,7 @@ function renderLate(L, byT) {
   const cnt = { light: 0, medium: 0, heavy: 0 };
   L.forEach((r) => { cnt[sevKey(r.lateMins)]++; });
   const top = topBy(L, (r) => r.lateMins);
-  const exM = L.filter((r) => r.perm === 'مقبول').reduce((a, r) => a + r.lateMins, 0);
+  const exM = L.filter((r) => permOk(r)).reduce((a, r) => a + r.lateMins, 0);
   $('#kpis').innerHTML = kpi('إجمالي مرات التأخر', L.length)
     + kpi('إجمالي دقائق التأخر', hm(lateM), `${lateM} دقيقة`)
     + kpi('تأخر كبير (أكثر من ٣٠ د)', cnt.heavy, '', cnt.heavy ? 'bad' : '', cnt.heavy ? 'var(--bad)' : '')
@@ -2548,7 +2593,7 @@ function renderLate(L, byT) {
       const d = r.data.dev || {};
       return `<tr data-id="${r.id}"><td>${dayCell(r)}</td><td>${nameCell(r)}</td>
         <td class="tm">${esc(fmtTime(r.data.start) || '—')} ← <b>${esc(fmtTime(d.arrive))}</b></td>
-        <td><div class="dur"><b>${r.lateMins} د</b><span class="sev ${sc}"></span><span class="sevl">${sl}</span></div>${r.perm === 'مقبول' ? '<span class="excl">مستثنى من الإجراءات</span>' : ''}</td>
+        <td><div class="dur"><b>${r.lateMins} د</b><span class="sev ${sc}"></span><span class="sevl">${sl}</span></div>${permOk(r) ? '<span class="excl">مستثنى من الإجراءات</span>' : ''}</td>
         <td>${permCell(r)}</td><td>${mesCell()}</td></tr>`;
     }).join('')}</tbody>` : emptyRow(L.length);
   } else groupMinutes(L, (r) => r.lateMins, 'مرات التأخر', 'دقائق التأخر');
@@ -2560,7 +2605,7 @@ function renderDep(P, byT) {
   const gone = P.filter((r) => r.data.dev.goneOn);
   const tot = P.reduce((a, r) => a + depMins(r), 0);
   const top = topBy(P, depMins);
-  const exM = P.filter((r) => r.perm === 'مقبول').reduce((a, r) => a + depMins(r), 0);
+  const exM = P.filter((r) => permOk(r)).reduce((a, r) => a + depMins(r), 0);
   $('#kpis').innerHTML = kpi('انصراف مبكر', early.length, `${early.reduce((a, r) => a + (r.earlyMins || 0), 0)} دقيقة`)
     + kpi('عدم تواجد أثناء الدوام', gone.length, `${gone.reduce((a, r) => a + (r.goneMins || 0), 0)} دقيقة`)
     + kpi('إجمالي الدقائق', hm(tot), `${tot} دقيقة`)
@@ -2577,7 +2622,7 @@ function renderDep(P, byT) {
       const times = [d.earlyOn ? `نهاية ${esc(fmtTime(r.data.end) || '—')} ← انصرف <b>${esc(fmtTime(d.earlyAt))}</b>` : '', d.goneOn ? `خارج <b>${esc(fmtTime(d.goneFrom))}</b> ← <b>${esc(fmtTime(d.goneTo))}</b>` : ''].filter(Boolean).join('<br>');
       const m = depMins(r);
       return `<tr data-id="${r.id}"><td>${dayCell(r)}</td><td>${nameCell(r)}</td><td>${tags}</td><td class="tm dp">${times}</td>
-        <td><div class="dur"><b>${m ? m + ' د' : '—'}</b></div>${d.earlyOn && !r.data.end ? '<span class="excl" style="color:var(--warn)">حدّد نهاية الدوام لحساب المدة</span>' : ''}${r.perm === 'مقبول' ? '<span class="excl">مستثنى من الإجراءات</span>' : ''}</td>
+        <td><div class="dur"><b>${m ? m + ' د' : '—'}</b></div>${d.earlyOn && !r.data.end ? '<span class="excl" style="color:var(--warn)">حدّد نهاية الدوام لحساب المدة</span>' : ''}${permOk(r) ? '<span class="excl">مستثنى من الإجراءات</span>' : ''}</td>
         <td>${permCell(r)}</td><td>${mesCell()}</td></tr>`;
     }).join('')}</tbody>` : emptyRow(P.length);
   } else groupMinutes(P, depMins, 'المرات', 'الدقائق');
@@ -2589,7 +2634,7 @@ function emptyRow(hasAny) {
 function groupMinutes(rows, f, cntLabel, minLabel) {
   const tot = periodTotals();
   const g = new Map();
-  rows.forEach((r) => { const e = g.get(r.key) || { key: r.key, name: r.emp.name || r.key, n: 0, m: 0, ex: 0 }; e.n++; e.m += f(r); if (r.perm === 'مقبول') e.ex += f(r); g.set(r.key, e); });
+  rows.forEach((r) => { const e = g.get(r.key) || { key: r.key, name: r.emp.name || r.key, n: 0, m: 0, ex: 0 }; e.n++; e.m += f(r); if (permOk(r)) e.ex += f(r); g.set(r.key, e); });
   const list = [...g.values()].sort((a, b) => b.m - a.m);
   $('#grp').innerHTML = list.length ? `<div class="tscroll"><table class="lt"><thead><tr><th>الموظف</th><th>${cntLabel}</th><th>${minLabel}</th><th>مستثنى باستئذان</th><th>مجموع فترة الاحتساب</th><th>الإجراء</th><th></th></tr></thead><tbody>${list.map((e) => {
     const p = tot.get(e.key);
@@ -2688,7 +2733,8 @@ $('#lt').addEventListener('change', (e) => {
   if (t.classList.contains('row-ck')) { if (t.checked) SEL.add(r.id); else SEL.delete(r.id); renderLog(); }
   else if (t.classList.contains('f-reason')) patchRec(r.id, { reason: t.value, cls: t.value ? 'بعذر' : r.cls });
   else if (t.classList.contains('f-note')) patchRec(r.id, { note: t.value.trim() });
-  else if (t.classList.contains('f-perm')) patchRec(r.id, { perm: t.value, ...(r.form === 'absence' && t.value === 'مقبول' && !r.cls ? { cls: 'بعذر' } : {}) });
+  else if (t.classList.contains('f-why')) patchRec(r.id, { farisWhy: t.value.trim() });
+  else if (t.classList.contains('f-perm')) patchRec(r.id, { perm: t.value, ...(r.form === 'absence' && PERM_OK.includes(t.value) && !r.cls ? { cls: 'بعذر' } : {}) });
 });
 
 $('#btn-csv').addEventListener('click', () => {
@@ -2772,7 +2818,7 @@ function renderActions() {
 
   // الغياب بدون عذر
   const AB = absDedList();
-  $('#ac-abs').innerHTML = AB.length ? `<thead><tr><th>م</th><th>الاسم</th><th>أيام الغياب</th><th>تستحق الحسم</th><th>حُسمت</th><th></th></tr></thead><tbody>${AB.map((e, i) => {
+  $('#ac-abs').innerHTML = AB.length ? `<thead><tr><th>م</th><th>الاسم</th><th>أيام الغياب</th><th>تستحق الحسم</th><th>حُسمت</th><th>الحسم</th><th></th></tr></thead><tbody>${AB.map((e, i) => {
     const sel = absSel(e);
     return `<tr data-akey="${esc(e.key)}">
       <td class="num">${i + 1}</td><td>${nameCell({ emp: e.emp, key: e.key })}</td>
@@ -2787,6 +2833,7 @@ function renderActions() {
       }).join('')}</div></td>
       <td class="num">${e.dueDays ? `<b style="color:var(--bad)">${daysWord(e.dueDays)}</b>${sel.size !== e.dueDays ? `<small class="hint" style="display:block;margin:0">المحدد للقرار: ${sel.size ? daysWord(sel.size) : 'لا شيء'}</small>` : ''}` : '—'}${e.waitDays ? `<small class="hint" style="display:block;margin:0;color:#c2410c">${daysWord(e.waitDays)} بانتظار العذر</small>` : ''}</td>
       <td class="num">${e.doneDays ? `<span class="gdone">${daysWord(e.doneDays)} ✔</span>` : '—'}</td>
+      <td class="num">${e.dueDays && e.doneDays ? '<span class="st-pill wait">جزئياً</span>' : e.dueDays ? '<span class="st-pill bad">لا</span>' : e.doneDays ? '<span class="st-pill ok">نعم</span>' : '<span class="st-pill wait">بانتظار</span>'}</td>
       <td><div class="acts">${e.dueDays ? `<button type="button" class="btn warn" data-absded="1"${sel.size ? '' : ' disabled'}>قرار حسم غياب (${sel.size})</button><button type="button" class="btn" data-absdone="1"${sel.size ? '' : ' disabled'}>تم الحسم</button>` : ''}</div></td></tr>`;
   }).join('')}</tbody>` : '<tbody><tr><td class="empty-log">لا يوجد غياب بدون عذر أو غياب تجاوز 5 أيام دون عذر في هذه الفترة.</td></tr></tbody>';
   $('#ac-abs-lg').hidden = !AB.length;
@@ -2850,6 +2897,13 @@ function interruptionCases(from = AC.from, to = AC.to) {
 
 // أيام الغياب بدون عذر (أو بلا عذر بعد 5 أيام) لكل موظف
 const ABS_GRACE = 5;
+// الرفع في نظام فارس: الغياب بعذر = رُفع، بدون عذر أو مضت 5 أيام بلا عذر = لم يُرفع (ويتحول إلى حسم)
+// الاستئذان (انتداب، مهمة عمل، تدريب) لا يُرفع في فارس، ويُكتب نوعه سبباً لعدم الرفع
+function farisOf(r) { return !permOk(r) && r.cls === 'بعذر' ? 'yes' : 'no'; }
+// يتحول الغياب إلى حسم إذا صُنّف بدون عذر أو مضت 5 أيام دون عذر (ولا حسم مع الاستئذان)
+const absIsDed = (r) => !permOk(r) && r.cls !== 'بعذر' && (r.cls === 'بدون عذر' || daysAgo(absRange(r)[1]) >= ABS_GRACE);
+const permWhy = (r) => (r.perm === 'مقبول' ? 'استئذان مقبول' : r.perm);
+const farisWhyDef = (r) => (r.cls === 'بدون عذر' ? 'غياب بدون عذر' : 'لم يقدّم عذراً خلال 5 أيام');
 // أيام المساءلة نفسها (الجمعة والسبت مستبعدان إلا إذا سُجّل الغياب شاملاً لها)
 function recDates(r) {
   const [a, z] = absRange(r); const keepWe = r.data && r.data.abs && r.data.abs.noWeekend === false; const out = [];
@@ -2860,7 +2914,7 @@ function absDedList() {
   const inR = (d) => (!AC.from || d >= AC.from) && (!AC.to || d <= AC.to);
   const m = new Map();
   LOG.forEach((r) => {
-    if (r.form !== 'absence' || r.cls === 'بعذر' || r.perm === 'مقبول') return;
+    if (r.form !== 'absence' || r.cls === 'بعذر' || permOk(r)) return;
     const z = absRange(r)[1];
     const nox = !r.cls && daysAgo(z) >= ABS_GRACE;
     const dueRec = r.cls === 'بدون عذر' || nox;
@@ -3035,7 +3089,7 @@ function repAbsence(from, to, emp) {
 function repLate(from, to, emp) {
   const L = recsIn(from, to, emp).filter(hasLate).sort((a, b) => a.date.localeCompare(b.date));
   const tot = L.reduce((a, r) => a + r.lateMins, 0);
-  const ex = L.filter((r) => r.perm === 'مقبول').reduce((a, r) => a + r.lateMins, 0);
+  const ex = L.filter((r) => permOk(r)).reduce((a, r) => a + r.lateMins, 0);
   const body = L.length ? rpStats([[L.length, 'حالات التأخر'], [hm(tot), 'مجموع التأخر (ساعة)', 'warn'], [L.filter((r) => r.lateMins > 30).length, 'تأخر كبير (+٣٠ د)', 'bad'], [ex, 'مستثنى باستئذان (د)', 'good'], [new Set(L.map((r) => r.key)).size, 'عدد الموظفين']])
     + rpTable(['م', 'الاسم', 'اليوم', 'التاريخ', 'بداية الدوام', 'وقت الحضور', 'التأخر (د)', 'الشدة', 'الاستئذان'], L.map((r, i) => `<tr><td>${i + 1}</td><td class="nm">${esc(r.emp.name || '')}</td><td>${esc(dayOf(r.date))}</td><td>${esc(hijriOf(r.date))} هـ<br>${esc(dmy(r.date))}</td><td>${esc(fmtTime(r.data.start))}</td><td>${esc(fmtTime((r.data.dev || {}).arrive))}</td><td><b>${r.lateMins}</b></td><td>${SEV[sevKey(r.lateMins)][1]}</td><td>${esc(r.perm || '—')}</td></tr>`),
       `<tr><td colspan="6">المجموع</td><td>${tot}</td><td colspan="2">${hm(tot)} ساعة</td></tr>`)
@@ -3059,7 +3113,7 @@ function repRegister(from, to, emp) {
   const body = R.length ? rpStats([[R.length, 'إجمالي المساءلات'], [R.filter((r) => r.form === 'absence').length, 'مساءلات غياب', 'bad'], [R.filter((r) => r.form === 'latedep').length, 'مساءلات تأخر وانصراف', 'warn'], [new Set(R.map((r) => r.key)).size, 'عدد الموظفين']])
     + rpTable(['م', 'تاريخ الواقعة', 'الموظف', 'رقم الهوية', 'نوع المساءلة', 'التفاصيل', 'رقم المعاملة', 'تاريخ المعاملة', 'الحالة'], R.map((r, i) => {
       const det = r.form === 'absence' ? daysTxt(absD(r)) : [r.lateMins ? `تأخر ${r.lateMins} د` : '', depMins(r) ? `خروج ${depMins(r)} د` : ''].filter(Boolean).join('، ');
-      const st = r.form === 'absence' ? clsTxt(r) : r.perm === 'مقبول' ? 'استئذان مقبول' : '—';
+      const st = r.form === 'absence' ? clsTxt(r) : permOk(r) ? permTxt(r) : '—';
       return `<tr><td>${i + 1}</td><td>${esc(hijriOf(r.date))} هـ<br>${esc(dmy(r.date))}</td><td class="nm">${esc(r.emp.name || '')}</td><td>${esc(r.emp.civil || '')}</td><td>${esc(typeTxt(r))}</td><td>${esc(det || '—')}</td><td>${esc((r.data.doc && r.data.doc.no) || '—')}</td><td>${r.data.doc && r.data.doc.date ? esc(dmy(r.data.doc.date)) : '—'}</td><td>${esc(st)}</td></tr>`;
     }))
     : noData('لا توجد مساءلات مسجّلة في هذه الفترة.');
@@ -3086,7 +3140,7 @@ function repStaff(from, to, emp) {
       const det = r.form === 'absence' ? (r.end ? `حتى ${dmy(r.end)}` : 'يوم واحد') + (r.reason ? ` · ${r.reason}` : '')
         : [r.lateMins ? `حضر ${fmtTime(d.arrive)}` : '', d.earlyOn ? `انصرف ${fmtTime(d.earlyAt)}` : '', d.goneOn ? `خارج ${fmtTime(d.goneFrom)}-${fmtTime(d.goneTo)}` : ''].filter(Boolean).join(' · ');
       const dur = r.form === 'absence' ? daysTxt(absD(r)) : `${r.lateMins + depMins(r)} د`;
-      const st = r.form === 'absence' ? clsTxt(r) : r.perm === 'مقبول' ? 'استئذان مقبول' : r.perm === 'مرفوض' ? 'استئذان مرفوض' : '—';
+      const st = r.form === 'absence' ? clsTxt(r) : r.perm ? permTxt(r) : '—';
       return `<tr><td>${i + 1}</td><td>${esc(dayOf(r.date))}</td><td>${esc(hijriOf(r.date))} هـ<br>${esc(dmy(r.date))}</td><td>${esc(typeTxt(r))}</td><td class="tx">${esc(det)}</td><td>${esc(dur)}</td><td>${esc(st)}</td></tr>`;
     }));
     return rpPage('تقرير الموظف', 'تقرير حضور وانضباط موظف', info + stats + table, 'الفترة ' + perTxt(from, to));
@@ -3200,6 +3254,7 @@ function repMonthly(ym) {
 function renderReports() {
   if (RP.from == null) { [RP.from, RP.to] = presetRange('all'); RP.preset = 'all'; }
   $('#rp-from').value = RP.from; $('#rp-to').value = RP.to;
+  renderAbsStat();
   if (!$('#mr-month').value) { const t = new Date(); $('#mr-month').value = `${t.getFullYear()}-${pad(t.getMonth() + 1)}`; }
   const keys = [...new Set(LOG.map((r) => r.key))].sort((a, b) => empNameOf(a).localeCompare(empNameOf(b), 'ar'));
   $('#rp-emp').innerHTML = '<option value="">جميع الموظفين</option>' + keys.map((k) => `<option value="${esc(k)}"${RP.emp === k ? ' selected' : ''}>${esc(empNameOf(k))}</option>`).join('');
@@ -3221,6 +3276,138 @@ $('#view-reports').addEventListener('click', (e) => {
 $('#rp-from').addEventListener('input', (e) => { RP.from = e.target.value; RP.preset = ''; renderReports(); });
 $('#rp-to').addEventListener('input', (e) => { RP.to = e.target.value; RP.preset = ''; renderReports(); });
 $('#rp-emp').addEventListener('change', (e) => { RP.emp = e.target.value; renderReports(); });
+// ---- إحصائية الموظفين الغائبين (ملف Excel للإدارة العامة للتعليم) ----
+const AS = { from: '', to: '' };
+const hijriPad = (iso) => { const i = dateInfo(iso); return i ? i.hijri.split('/').map((x, k) => (k ? pad(Number(x)) : x)).join('/') : ''; };
+function asDefault() {
+  const t = new Date(); const a = new Date(t.getFullYear(), t.getMonth() - 1, 1); const z = new Date(t.getFullYear(), t.getMonth(), 0);
+  return [isoOf(a), isoOf(z)];
+}
+function absStatRows(from, to) {
+  const inR = (d) => d >= from && d <= to;
+  const out = [];
+  LOG.forEach((r) => {
+    if (r.form !== 'absence') return;
+    const fs = farisOf(r);
+    recDates(r).filter(inR).forEach((iso) => {
+      out.push({
+        iso, name: (r.emp && r.emp.name) || r.key, civil: (r.emp && r.emp.civil) || '',
+        dates: hijriPad(iso),
+        act: absIsDed(r) ? 'حسم' : 'مساءلة غياب',
+        faris: fs === 'yes' ? 'نعم' : 'لا',
+        why: fs === 'yes' ? '' : permOk(r) ? permWhy(r) : absIsDed(r) ? (r.farisWhy || farisWhyDef(r)) : 'بانتظار العذر (مهلة 5 أيام)',
+        late: '', hr: '', notes: fs === 'yes' ? r.reason || '' : '', n: 1,
+      });
+    });
+  });
+  out.sort((x, y) => x.iso.localeCompare(y.iso) || x.name.localeCompare(y.name, 'ar'));
+  // من بلغ حد الرفع للموارد البشرية بالتأخير: صف مستقل لا يُدمج مع الغياب
+  const tot = buildTotals(periodStart(), to);
+  const late = [];
+  tot.forEach((t) => {
+    if (t.lateDed < 1) return;
+    const raised = t.lateDed - t.lateRaise;
+    late.push({ name: (t.emp && t.emp.name) || t.key, civil: (t.emp && t.emp.civil) || '', dates: '', act: '', faris: '', why: '', late: t.late,
+      hr: t.lateRaise ? 'لا' : 'نعم', notes: `تأخر — ${daysWord(t.lateDed)} حسم${t.lateRaise && raised ? ` (رُفع ${daysWord(raised)})` : ''}`, n: 0 });
+  });
+  late.sort((x, y) => y.late - x.late);
+  return out.concat(late);
+}
+let excelLib = null;
+function loadExcel() {
+  if (window.ExcelJS) return Promise.resolve(window.ExcelJS);
+  if (excelLib) return excelLib;
+  excelLib = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+    sc.crossOrigin = 'anonymous';
+    sc.onload = () => res(window.ExcelJS); sc.onerror = () => { excelLib = null; rej(new Error('تعذّر تحميل مكتبة Excel. تحقّق من الإنترنت.')); };
+    document.head.appendChild(sc);
+  });
+  return excelLib;
+}
+async function exportAbsStat() {
+  const from = AS.from; const to = AS.to;
+  if (!from || !to || from > to) { toast('حدّد فترة صحيحة للإحصائية'); return; }
+  const rows = absStatRows(from, to);
+  const btn = $('#btn-as'); btn.disabled = true; const bt = btn.textContent; btn.textContent = 'جارٍ التجهيز…';
+  try {
+    const ExcelJS = await loadExcel();
+    const x = S.set;
+    const wb = new ExcelJS.Workbook(); wb.creator = 'نماذج المساءلة والإجراءات';
+    const ws = wb.addWorksheet('الموظفين الغائبين', { views: [{ rightToLeft: true }], pageSetup: { orientation: 'landscape', paperSize: 9, fitToPage: true, fitToWidth: 1, fitToHeight: 0, horizontalCentered: true } });
+    const W = [4.4, 16, 15.9, 12, 12, 20, 22.4, 15.3, 24, 20, 14, 26.7, 12, 18, 18];
+    W.forEach((w, i) => { ws.getColumn(i + 1).width = w; });
+    const F = 'Sakkal Majalla';
+    const thin = { style: 'thin', color: { argb: 'FF7F7F7F' } };
+    const box = { top: thin, left: thin, bottom: thin, right: thin };
+    const edu = x.edu || 'الإدارة العامة للتعليم بمنطقة ........';
+    const school = x.school ? 'مدرسة ' + x.school : '';
+    ws.mergeCells('A1:K1'); ws.mergeCells('L1:O1'); ws.mergeCells('A2:O2');
+    ws.getRow(1).height = 82.5; ws.getRow(2).height = 50;
+    const c1 = ws.getCell('A1');
+    c1.value = ['المملكة العربية السعودية', 'وزارة التعليم', edu, school].filter(Boolean).join('\n');
+    c1.font = { name: F, size: 14, bold: true }; c1.alignment = { horizontal: 'right', vertical: 'middle', wrapText: true, readingOrder: 'rtl' };
+    try { const img = wb.addImage({ base64: LOGO, extension: 'png' }); ws.addImage(img, { tl: { col: 12.2, row: 0.15 }, ext: { width: 150, height: 104 } }); } catch (e) { /* بدون شعار */ }
+    const c2 = ws.getCell('A2');
+    c2.value = `أسماء الموظفين الغائبين لمدة شهر من تاريخ ${hijriPad(from)}هـ حتى ${hijriPad(to)}هـ   ${edu}`;
+    c2.font = { name: F, size: 18, bold: true }; c2.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true, readingOrder: 'rtl' };
+    const H = ['م', 'المنطقة/المحافظة', 'النطاق / الحي', 'القطاع', 'المرحلة', 'أسم المدرسة', 'اسم الموظف', 'الهوية الوطنية', 'تاريخ الغياب', 'الاجراء المتخذ', 'الرفع في فارس', 'أسباب عدم الرفع في نظام فارس', 'مجموع دقائق التأخير', 'الرفع للموارد البشرية *', 'ملاحظات'];
+    const hr = ws.getRow(3); hr.height = 30;
+    H.forEach((h, i) => {
+      const c = hr.getCell(i + 1); c.value = h.endsWith(' *') ? { richText: [{ text: h.slice(0, -2) + ' ', font: { name: F, size: 12, bold: true, color: { argb: 'FFF2F2F2' } } }, { text: '*', font: { name: F, size: 16, bold: true, color: { argb: 'FFFF0000' } } }] } : h;
+      c.font = { name: F, size: 12, bold: true, color: { argb: 'FFF2F2F2' } };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E4E79' } };
+      c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }; c.border = box;
+    });
+    const list = rows.length ? rows : [null];
+    list.forEach((r, i) => {
+      const row = ws.getRow(4 + i);
+      const v = r ? [i + 1, x.statRegion || '', x.statDistrict || '', x.statSector || '', x.statStage || '', x.school || '', r.name, r.civil, r.dates, r.act, r.faris, r.why, r.late === '' ? '' : r.late, r.hr, r.notes]
+        : [1, '', '', '', '', x.school || '', 'لا يوجد موظفون غائبون في هذه الفترة', '', '', '', '', '', '', '', ''];
+      v.forEach((val, k) => {
+        const c = row.getCell(k + 1); c.value = val;
+        c.font = { name: F, size: 12, bold: k === 0 || k === 6, color: k === 0 ? { argb: 'FFF2F2F2' } : undefined };
+        if (k === 0) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E4E79' } };
+        c.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true, readingOrder: 'rtl' }; c.border = box;
+        if (k === 7 && val) c.numFmt = '@';
+        if (k === 10 || k === 13) c.dataValidation = { type: 'list', allowBlank: true, formulae: ['"نعم,لا"'], showErrorMessage: true, errorTitle: 'قيمة غير صحيحة', error: 'اختر نعم أو لا' };
+      });
+      const lines = r ? Math.max(1, Math.ceil(String(r.why).length / 30), Math.ceil(String(r.hr).length / 20)) : 1;
+      row.height = Math.max(24, 18 * lines);
+    });
+    let n = 4 + list.length + 1;
+    ws.mergeCells(`A${n}:B${n}`);
+    const nh = ws.getCell(`A${n}`); nh.value = 'ملاحظات';
+    nh.font = { name: F, size: 14, bold: true, color: { argb: 'FF0C0C0C' } }; nh.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF2CB' } }; nh.alignment = { horizontal: 'center', vertical: 'middle' };
+    ['أن يكون الغياب متوافق مع تطبيق حضوري.', 'أن ترسل الإحصائية على اليوم السابع من كل شهر ميلادي.', 'يتم اتخاذ إجراءات الغياب بما نصت عليه اللائحة.', '*التأخير لمن بلغ 420 دقيقة أو مضاعفاتها خلال السنة المالية الواحدة وفق التعاميم والتعليمات المبلغة لكم.'].forEach((t) => {
+      n++; ws.mergeCells(`A${n}:H${n}`); const c = ws.getCell(`A${n}`); c.value = t; c.font = { name: F, size: 12, bold: true }; c.alignment = { horizontal: 'right', readingOrder: 'rtl' };
+    });
+    const buf = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `إحصائية_الموظفين_الغائبين_${hijriPad(from).replace(/\//g, '-')}_${hijriPad(to).replace(/\//g, '-')}.xlsx`;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    S.set.statSent = to.slice(0, 7); saveSet(); renderAbsStat();
+    toast(rows.length ? `تم تصدير الإحصائية (عدد الصفوف: ${rows.length})` : 'تم تصدير الإحصائية (لا يوجد غائبون)');
+  } catch (e) { toast(e.message || 'تعذّر إنشاء الملف', 'err'); } finally { btn.disabled = false; btn.textContent = bt; }
+}
+function renderAbsStat() {
+  if (!AS.from) [AS.from, AS.to] = asDefault();
+  $('#as-from').value = AS.from; $('#as-to').value = AS.to;
+  const rows = AS.from && AS.to && AS.from <= AS.to ? absStatRows(AS.from, AS.to) : [];
+  const ab = rows.filter((r) => r.n).length;
+  $('#as-count').textContent = `${ab ? daysWord(ab) + ' غياب' : 'لا غياب'}${rows.length > ab ? ` + ${rows.length - ab} بلغوا حد التأخير` : ''}`;
+  // تذكير: الإرسال يوم 7 من كل شهر ميلادي عن الشهر السابق
+  const t = new Date(); const last = asDefault()[1].slice(0, 7);
+  const show = t.getDate() <= 7 && S.set.statSent !== last;
+  $('#as-due').hidden = !show;
+  if (show) $('#as-due').textContent = `⏰ حان موعد إرسال إحصائية الشهر الماضي — آخر موعد يوم 7 (${t.getDate() === 7 ? 'اليوم' : `متبقٍ ${daysWord(7 - t.getDate())}`}).`;
+  const nav = document.querySelector('.side .nav[data-view="reports"]'); if (nav) nav.classList.toggle('has-due', show);
+}
+$('#as-from').addEventListener('input', (e) => { AS.from = e.target.value; renderAbsStat(); });
+$('#as-to').addEventListener('input', (e) => { AS.to = e.target.value; renderAbsStat(); });
+$('#btn-as').addEventListener('click', exportAbsStat);
 $('#btn-mr').addEventListener('click', () => { const v = $('#mr-month').value; if (!v) { toast('اختر الشهر'); return; } printPages(repMonthly(v), 'التقرير الشهري'); });
 
 
@@ -3634,7 +3821,7 @@ function empAnalysisHTML(key, from, to) {
   const cur = t && t.cur != null ? TIERS[t.cur].act : 'لا يوجد';
   // رسم ١: أعمدة دقائق التأخر لكل حالة. رسم ٢: التراكم مع حدود الإجراءات
   const lateByDay = new Map();
-  L.forEach((r) => lateByDay.set(r.date, (lateByDay.get(r.date) || 0) + (r.perm === 'مقبول' ? 0 : r.lateMins)));
+  L.forEach((r) => lateByDay.set(r.date, (lateByDay.get(r.date) || 0) + (permOk(r) ? 0 : r.lateMins)));
   const bars = [...lateByDay.entries()].map(([d, v]) => ({ d, v }));
   let acc = 0; const cum = bars.map((p) => ({ d: p.d, v: (acc += p.v) }));
   const charts = bars.length
@@ -3650,7 +3837,7 @@ function empAnalysisHTML(key, from, to) {
     const d = r.data.dev || {};
     const det = r.form === 'absence' ? (r.end ? `حتى ${dmy(r.end)}` : 'يوم واحد') : [r.lateMins ? `حضر ${fmtTime(d.arrive)}` : '', d.earlyOn ? `انصرف ${fmtTime(d.earlyAt)}` : '', d.goneOn ? `خارج ${fmtTime(d.goneFrom)}-${fmtTime(d.goneTo)}` : ''].filter(Boolean).join(' · ');
     const dur = r.form === 'absence' ? daysTxt(absD(r)) : `${(r.lateMins || 0) + depMins(r)} د`;
-    const note = [r.form === 'absence' ? (r.cls || 'لم يُصنَّف') : '', r.reason, r.perm ? `استئذان ${r.perm}` : '', r.note].filter(Boolean).join(' · ');
+    const note = [r.form === 'absence' ? (r.cls || 'لم يُصنَّف') : '', r.reason, permTxt(r), r.note].filter(Boolean).join(' · ');
     return `<tr><td>${eaFmtD(r.date)}</td><td>${esc(i.day || '')}</td><td>${esc(typeTxt(r))}</td><td>${esc(det || '—')}</td><td>${esc(dur)}</td><td class="tx">${esc(note)}</td></tr>`;
   }).join('');
   const table = `<table class="ea-tbl"><thead><tr><th>التاريخ</th><th>اليوم</th><th>النوع</th><th>الوقت / التفاصيل</th><th>المدة</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table>`;
