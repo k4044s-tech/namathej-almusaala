@@ -766,15 +766,6 @@ body:not(.locked) #gate{display:none}
     <div class="upanel" id="upanel" hidden data-acct-box></div>
   </div>
 </header>
-<div class="notice" id="notice" role="note">
-  <svg class="notice-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4.5M12 17.2v.3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-  <p><b>بيانات مدرستك محفوظة في قاعدة بيانات آمنة.</b> لا يطّلع عليها إلا حساب مدرستك، وتظهر نفسها على أي جهاز تدخل منه. ونسخة منها على هذا الجهاز ليعمل التطبيق بدون إنترنت، وتُرفع التعديلات تلقائياً عند الاتصال.</p>
-  <div class="notice-act">
-    <button type="button" class="btn" id="nt-export">حفظ نسخة احتياطية</button>
-    <button type="button" class="btn" id="nt-import">استعادة من نسخة</button>
-    <button type="button" class="notice-x" id="nt-close" aria-label="إخفاء التنبيه">×</button>
-  </div>
-</div>
 
 <div class="shell">
 <nav class="side" aria-label="القائمة الرئيسية">
@@ -1943,9 +1934,6 @@ $('#btn-export').addEventListener('click', () => {
   toast('تم حفظ النسخة الاحتياطية');
 });
 $('#btn-import').addEventListener('click', () => $('#file-import').click());
-$('#nt-export').addEventListener('click', () => $('#btn-export').click());
-$('#nt-import').addEventListener('click', () => $('#file-import').click());
-$('#nt-close').addEventListener('click', () => { $('#notice').hidden = true; fit(); });
 $('#file-import').addEventListener('change', async (e) => {
   const f = e.target.files[0];
   e.target.value = '';
