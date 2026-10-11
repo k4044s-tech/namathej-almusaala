@@ -428,6 +428,9 @@ button.ladder-dot:hover{transform:scale(1.12)}
 table.lt input.f-why{min-height:36px;border:1px solid #c9d3d1;border-radius:7px;padding:4px 8px;font:inherit;font-size:13px;background:#fff;color:var(--ink);width:170px}
 .fr-wait{font-size:12px;color:#c2410c}
 .fr-perm{font-size:13px;color:#1e4e79}
+.hrseg button{min-width:46px}
+.hrseg button.on{background:#16a34a;color:#fff;font-weight:700}
+.hrseg button.on.no{background:#b91c1c;border-color:#b91c1c;color:#fff}
 .okline{margin:0;color:#15803d;font-size:14px}
 @media (max-width:900px){
   .acf{grid-template-columns:1fr 1fr}
@@ -2261,6 +2264,7 @@ function logRecord(form, D) {
 }
 // مجموع كل موظف وسلّم إجراءاته خلال فترة (من/إلى)
 let RAISED = store.get('hf.raised', []);
+const hrFlag = (key) => RAISED.some((x) => x.key === key && x.kind === 'hr');
 function buildTotals(from, to) {
   const inR = (d) => (!from || d >= from) && (!to || d <= to);
   const map = new Map();
@@ -2532,7 +2536,7 @@ function renderAbs(A, c, byT) {
     + kpi('الأكثر غياباً في الفترة', top ? esc(top.n) : '—', top ? daysTxt(top.v) : '');
   $('#dist').innerHTML = distBar([['k-exc', 'بعذر', c.exc], ['k-unx', 'بدون عذر', c.unx], ['k-unc', 'لم يُدخل عذر', c.unc]]);
   $('#lf-chips').innerHTML = chips([['', 'الكل', c.all], ['__unc', 'لم يُدخل عذر', c.unc], ['بعذر', 'بعذر', c.exc], ['بدون عذر', 'بدون عذر', c.unx]], LF.cls);
-  $('#tb-hint').textContent = LF.view === 'table' ? 'التصنيف يُحفظ فوراً بمجرد الضغط · اختيار سبب إجازة يجعل الغياب «بعذر» تلقائياً · الرفع في فارس يُحدَّد من التصنيف: بعذر = نعم · استئذان (انتداب، مهمة عمل، تدريب) = لا وسببه نوع الاستئذان · بدون عذر = لا، ويتحول إلى حسم بعد 5 أيام بلا عذر · سبب عدم الرفع يُحفظ عند الخروج من الحقل' : '';
+  $('#tb-hint').textContent = LF.view === 'table' ? 'التصنيف يُحفظ فوراً بمجرد الضغط · اختيار سبب إجازة يجعل الغياب «بعذر» تلقائياً · الرفع في فارس يُحدَّد من التصنيف: الرفع في فارس = صدور قرار الحسم (✓ في الإجراءات) · سبب عدم الرفع: العذر أو نوع الاستئذان أو «لم يصدر قرار الحسم بعد» · الغياب بدون عذر أو بعد 5 أيام بلا عذر يتحول إلى حسم · سبب عدم الرفع يُحفظ عند الخروج من الحقل' : '';
   if (LF.view === 'table') {
     const rows = A.filter((r) => byT(r) && (LF.cls === '' || (LF.cls === '__unc' ? !r.cls : r.cls === LF.cls))).sort((a, b) => b.date.localeCompare(a.date));
     const allOn = rows.length && rows.every((r) => SEL.has(r.id));
@@ -2546,8 +2550,8 @@ function renderAbs(A, c, byT) {
         <td><div class="cseg" role="group" aria-label="التصنيف"><button type="button" data-set="بعذر" class="${r.cls === 'بعذر' ? 'on' : ''}">بعذر</button><button type="button" data-set="بدون عذر" class="${r.cls === 'بدون عذر' ? 'on' : ''}">بدون عذر</button></div></td>
         <td><select class="f-reason" aria-label="السبب">${['', ...list].map((x) => `<option value="${esc(x)}"${x === (r.reason || '') ? ' selected' : ''}>${esc(x) || '— بدون سبب —'}</option>`).join('')}</select></td>
         ${(() => { const fs = farisOf(r); const left = ABS_GRACE - daysAgo(absRange(r)[1]);
-          return fs === 'yes' ? '<td><span class="st-pill ok">نعم</span></td><td>—</td>'
-            : permOk(r) ? `<td><span class="st-pill bad">لا</span></td><td><b class="fr-perm">${esc(permWhy(r))}</b></td>`
+          return fs === 'yes' ? '<td><span class="st-pill ok">نعم</span><div class="fr-wait" style="color:#166534">صدر الحسم</div></td><td>—</td>'
+            : permOk(r) || r.cls === 'بعذر' ? `<td><span class="st-pill bad">لا</span></td><td><b class="fr-perm">${esc(farisWhyOf(r))}</b></td>`
             : absIsDed(r) ? `<td><span class="st-pill bad">لا</span></td><td><input class="f-why" type="text" value="${esc(r.farisWhy || '')}" placeholder="${esc(farisWhyDef(r))}" aria-label="سبب عدم الرفع"></td>`
             : `<td><span class="st-pill bad">لا</span></td><td><span class="fr-wait">بانتظار العذر — متبقٍ ${daysWord(Math.max(1, left))}</span></td>`; })()}
         <td>${permCell(r)}</td>
@@ -2801,7 +2805,7 @@ function renderActions() {
     + kpi('مكتملو الإجراءات', complete, '', '', '#15803d')
     + kpi('أيام حسم لم تُرفع', toRaise, '', toRaise ? 'bad' : '', toRaise ? 'var(--bad)' : '') : '';
   if (absDue) $('#ac-kpis').innerHTML += kpi('أيام غياب تستحق الحسم', absDue, 'بدون عذر أو بلا عذر خلال 5 أيام', 'bad', 'var(--bad)');
-  $('#ac-table').innerHTML = P.length ? `<thead><tr><th>م</th><th>الاسم</th><th>مجموع التأخر (د)</th><th>مجموع الغياب (أيام)</th><th>الدرجة الحالية</th><th>مسار الإجراءات (١ ← ٨)</th><th>أيام الحسم</th><th>الإجراء التالي</th><th></th></tr></thead><tbody>${P.map((e, i) => {
+  $('#ac-table').innerHTML = P.length ? `<thead><tr><th>م</th><th>الاسم</th><th>مجموع التأخر (د)</th><th>مجموع الغياب (أيام)</th><th>الدرجة الحالية</th><th>مسار الإجراءات (١ ← ٨)</th><th>أيام الحسم</th><th>الرفع للموارد البشرية</th><th>الإجراء التالي</th><th></th></tr></thead><tbody>${P.map((e, i) => {
     const cur = e.cur != null ? TIERS[e.cur] : null;
     return `<tr data-key="${esc(e.key)}">
       <td class="num">${i + 1}</td>
@@ -2811,6 +2815,7 @@ function renderActions() {
       <td>${cur ? `<span class="step-badge"><b>${e.cur + 1}</b><span>${esc(cur.act)}<small>${esc(STEP_TH[e.cur])}</small></span></span>` : '—'}</td>
       <td>${ladderHTML(e)}</td>
       <td class="ded-cell">${e.lateDed ? daysWord(e.lateDed) : '—'}${e.lateDed ? (e.lateRaise ? `<small class="bad">للرفع: ${e.lateRaise}</small><button type="button" class="btn" data-raise="late" style="min-height:30px;font-size:12px;padding:2px 8px;margin-top:3px">تم الرفع</button>` : '<small class="ok">رُفعت ✔</small>') : ''}</td>
+      <td>${(() => { const on = hrFlag(e.key); return `<div class="cseg hrseg" role="group" aria-label="الرفع للموارد البشرية"><button type="button" data-hr="yes" class="${on ? 'on' : ''}">نعم</button><button type="button" data-hr="no" class="${on ? '' : 'on no'}">لا</button></div>`; })()}</td>
       <td>${e.due != null ? `<button type="button" class="nx" data-next="${e.due}">تنفيذ (${e.due + 1}) ${esc(TIERS[e.due].act)}</button>${e.pendingCount > 1 ? `<small class="hint" style="display:block;margin:3px 0 0">ثم ${e.pendingCount - 1} إجراء آخر مستحق</small>` : ''}` : '<span class="nx-done">مكتمل ✔</span>'}</td>
       <td><div class="acts"><button type="button" class="btn warn" data-act="form">النموذج والمساءلة</button>${e.lateDed ? '<button type="button" class="btn" data-act="deduct">قرار الحسم</button>' : ''}</div></td>
     </tr>`;
@@ -2898,12 +2903,20 @@ function interruptionCases(from = AC.from, to = AC.to) {
 // أيام الغياب بدون عذر (أو بلا عذر بعد 5 أيام) لكل موظف
 const ABS_GRACE = 5;
 // الرفع في نظام فارس: الغياب بعذر = رُفع، بدون عذر أو مضت 5 أيام بلا عذر = لم يُرفع (ويتحول إلى حسم)
-// الاستئذان (انتداب، مهمة عمل، تدريب) لا يُرفع في فارس، ويُكتب نوعه سبباً لعدم الرفع
-function farisOf(r) { return !permOk(r) && r.cls === 'بعذر' ? 'yes' : 'no'; }
+// الرفع في فارس = صدور قرار الحسم لذلك اليوم (نعم)، وإلا (لا)
+const dedDay = (r, iso) => !!(r.dedDone || (r.dedOn && r.dedOn[iso]));
+function farisOf(r) { const ds = recDates(r); return ds.length && ds.every((d) => dedDay(r, d)) ? 'yes' : 'no'; }
+// سبب عدم الرفع في فارس
+function farisWhyOf(r) {
+  if (permOk(r)) return permWhy(r);
+  if (r.cls === 'بعذر') return r.reason || 'غياب بعذر';
+  if (!absIsDed(r)) return 'بانتظار العذر (مهلة 5 أيام)';
+  return r.farisWhy || 'لم يصدر قرار الحسم بعد';
+}
 // يتحول الغياب إلى حسم إذا صُنّف بدون عذر أو مضت 5 أيام دون عذر (ولا حسم مع الاستئذان)
 const absIsDed = (r) => !permOk(r) && r.cls !== 'بعذر' && (r.cls === 'بدون عذر' || daysAgo(absRange(r)[1]) >= ABS_GRACE);
 const permWhy = (r) => (r.perm === 'مقبول' ? 'استئذان مقبول' : r.perm);
-const farisWhyDef = (r) => (r.cls === 'بدون عذر' ? 'غياب بدون عذر' : 'لم يقدّم عذراً خلال 5 أيام');
+const farisWhyDef = () => 'لم يصدر قرار الحسم بعد';
 // أيام المساءلة نفسها (الجمعة والسبت مستبعدان إلا إذا سُجّل الغياب شاملاً لها)
 function recDates(r) {
   const [a, z] = absRange(r); const keepWe = r.data && r.data.abs && r.data.abs.noWeekend === false; const out = [];
@@ -3025,6 +3038,13 @@ async function acClick(ev) {
   }
   const nx = ev.target.closest('[data-next]');
   if (nx) { const i = Number(nx.dataset.next); if (await ask({ title: 'تسجيل تنفيذ الإجراء', msg: `تسجيل الدرجة <b>(${i + 1}) ${esc(TIERS[i].act)}</b> منفّذة للموظف <b>${esc(e.emp.name)}</b>؟`, note: 'لطباعة بيان الإجراء استخدم زر «النموذج والمساءلة»، ويُسجَّل منفّذاً تلقائياً عند الطباعة.', ok: 'تسجيل التنفيذ' })) { setStepDone(e.key, i, true); toast('سُجّل تنفيذ الإجراء'); } return; }
+  const hb = ev.target.closest('[data-hr]');
+  if (hb) {
+    // سؤال مستقل: هل رُفع للموارد البشرية؟ (لا علاقة له برفع الحسم في فارس)
+    RAISED = RAISED.filter((x) => !(x.key === e.key && x.kind === 'hr'));
+    if (hb.dataset.hr === 'yes') RAISED.push({ id: uid(), key: e.key, kind: 'hr', days: 0, date: todayISO() });
+    saveLog(); renderActions(); toast(hb.dataset.hr === 'yes' ? 'سُجّل الرفع للموارد البشرية' : 'أُلغي الرفع للموارد البشرية'); return;
+  }
   const rs = ev.target.closest('[data-raise]');
   if (rs) {
     const kind = rs.dataset.raise; const days = kind === 'late' ? e.lateRaise : e.depRaise;
@@ -3288,27 +3308,29 @@ function absStatRows(from, to) {
   const out = [];
   LOG.forEach((r) => {
     if (r.form !== 'absence') return;
-    const fs = farisOf(r);
     recDates(r).filter(inR).forEach((iso) => {
+      const done = dedDay(r, iso);
       out.push({
         iso, name: (r.emp && r.emp.name) || r.key, civil: (r.emp && r.emp.civil) || '',
         dates: hijriPad(iso),
-        act: absIsDed(r) ? 'حسم' : 'مساءلة غياب',
-        faris: fs === 'yes' ? 'نعم' : 'لا',
-        why: fs === 'yes' ? '' : permOk(r) ? permWhy(r) : absIsDed(r) ? (r.farisWhy || farisWhyDef(r)) : 'بانتظار العذر (مهلة 5 أيام)',
-        late: '', hr: '', notes: fs === 'yes' ? r.reason || '' : '', n: 1,
+        act: done || absIsDed(r) ? 'حسم' : 'مساءلة غياب',
+        faris: done ? 'نعم' : 'لا',
+        why: done ? '' : farisWhyOf(r),
+        late: '', hr: '', notes: '', n: 1,
       });
     });
   });
   out.sort((x, y) => x.iso.localeCompare(y.iso) || x.name.localeCompare(y.name, 'ar'));
   // من بلغ حد الرفع للموارد البشرية بالتأخير: صف مستقل لا يُدمج مع الغياب
   const tot = buildTotals(periodStart(), to);
+  const now = buildTotals(periodStart(), ''); // حالة الرفع كما هي الآن
   const late = [];
   tot.forEach((t) => {
     if (t.lateDed < 1) return;
+    const tn = now.get(t.key); if (tn) t.lateRaise = Math.max(0, t.lateDed - (tn.lateDed - tn.lateRaise));
     const raised = t.lateDed - t.lateRaise;
-    late.push({ name: (t.emp && t.emp.name) || t.key, civil: (t.emp && t.emp.civil) || '', dates: '', act: '', faris: '', why: '', late: t.late,
-      hr: t.lateRaise ? 'لا' : 'نعم', notes: `تأخر — ${daysWord(t.lateDed)} حسم${t.lateRaise && raised ? ` (رُفع ${daysWord(raised)})` : ''}`, n: 0 });
+    late.push({ name: (t.emp && t.emp.name) || t.key, civil: (t.emp && t.emp.civil) || '', dates: '', act: 'حسم تأخر', faris: t.lateRaise ? 'لا' : 'نعم', why: t.lateRaise ? 'لم يُرفع حسم التأخر بعد' : '', late: t.late,
+      hr: hrFlag(t.key) ? 'نعم' : 'لا', notes: `تأخر — ${daysWord(t.lateDed)} حسم${t.lateRaise && raised ? ` (رُفع ${daysWord(raised)})` : ''}`, n: 0 });
   });
   late.sort((x, y) => y.late - x.late);
   return out.concat(late);
