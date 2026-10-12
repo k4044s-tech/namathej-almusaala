@@ -1,6 +1,6 @@
 // نماذج المساءلة — عامل الخدمة: تشغيل بدون إنترنت
 // غيّر الرقم عند تعديل الأيقونات أو ملف manifest (الصفحة نفسها تتحدث تلقائياً)
-const VERSION = 'v2';
+const VERSION = 'v47';
 const CACHE = 'hf-' + VERSION;
 const CORE = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/og-image.png'];
 
@@ -39,6 +39,16 @@ self.addEventListener('fetch', (e) => {
           const net = fetch(req).then((res) => { if (res.ok || res.type === 'opaque') c.put(req, res.clone()); return res; }).catch(() => hit);
           return hit || net;
         })
+      )
+    );
+    return;
+  }
+
+  // مكتبة الاتصال بقاعدة البيانات (إصدار ثابت): من الجهاز أولاً ليعمل التطبيق بدون إنترنت
+  if (url.hostname === 'cdn.jsdelivr.net' || url.hostname === 'cdnjs.cloudflare.com') {
+    e.respondWith(
+      caches.open(CACHE).then((c) =>
+        c.match(req).then((hit) => hit || fetch(req).then((res) => { if (res.ok || res.type === 'opaque') c.put(req, res.clone()); return res; }))
       )
     );
     return;
