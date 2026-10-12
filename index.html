@@ -741,6 +741,8 @@ body:not(.locked) #gate{display:none}
 .g-tbl th{text-align:start;color:var(--muted);font-weight:600;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 .g-tbl td{padding:11px 8px;border-bottom:1px solid #eef1f0;vertical-align:middle}
 .g-tbl .ad-u{color:var(--muted);font-size:12.5px;text-align:right}
+.g-tbl .ad-who{color:#334155;font-size:12px;margin-top:2px}
+.g-tbl .ad-who a{color:#15803d;text-decoration:none}
 .g-tbl .ad-n{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .ad-left{font-size:12px;color:var(--muted)} .ad-left.warn{color:#b45309} .ad-left.bad{color:#b91c1c}
 .ad-acts{white-space:nowrap}
@@ -1072,7 +1074,7 @@ body:not(.locked) #gate{display:none}
         <span><span class="ladder-dot done"></span>نُفِّذ</span>
         <span><span class="ladder-dot reached"></span>مستحق لم يُنفَّذ</span>
         <span><span class="ladder-dot"></span>لم يُبلغ بعد</span>
-        <span>اضغط الدرجة المستحقة لتسجيلها منفّذة، واضغط ✓ لإعادة طباعة بيانها (أو إلغاء تنفيذها). البيان يعرض الحالات المرصودة حتى بلوغ حدّ الدرجة. الإجراءات تُنفَّذ بالتسلسل حسب توجيه إدارة الموارد البشرية.</span>
+        <span><b>الرفع في فارس</b> للتأخر = رفع أيام حسم التأخر (نعم / لا)، و<b>سبب عدم الرفع</b> يُكتب عند «لا» ويُحفظ عند الخروج من الحقل. اضغط الدرجة المستحقة لتسجيلها منفّذة، واضغط ✓ لإعادة طباعة بيانها (أو إلغاء تنفيذها). البيان يعرض الحالات المرصودة حتى بلوغ حدّ الدرجة. الإجراءات تُنفَّذ بالتسلسل حسب توجيه إدارة الموارد البشرية.</span>
       </div>
     </section>
 
@@ -1087,6 +1089,12 @@ body:not(.locked) #gate{display:none}
         <span><span class="ladder-dot ad wait"></span>بانتظار العذر</span>
         <span>اضغط الأيام الحمراء لاختيار ما يشمله القرار (يوم أو أكثر)، واضغط اليوم الأخضر لإلغاء حسمه.</span>
       </div>
+    </section>
+
+    <section class="card">
+      <h3>الغياب — الرفع في فارس والموارد البشرية</h3>
+      <p class="hint">كل غياب في الفترة المحددة أعلاه. <b>الرفع في فارس</b> = صدور قرار حسم الغياب لذلك اليوم (يصبح «نعم» عند تسجيل الحسم في الجدول السابق). <b>سبب عدم الرفع</b>: العذر أو نوع الاستئذان تلقائياً، أو اكتبه للغياب بدون عذر (يُحفظ عند الخروج من الحقل). <b>الرفع للموارد البشرية</b>: نعم / لا لكل غياب.</p>
+      <div class="tscroll"><table class="lt" id="ac-fa"></table></div>
     </section>
 
     <section class="card">
@@ -2356,6 +2364,10 @@ function logRecord(form, D) {
 // مجموع كل موظف وسلّم إجراءاته خلال فترة (من/إلى)
 let RAISED = store.get('hf.raised', []);
 const hrFlag = (key) => RAISED.some((x) => x.key === key && x.kind === 'hr');
+// سبب عدم رفع حسم التأخر في فارس (لكل موظف)
+const lateWhy = (key) => { const x = RAISED.find((y) => y.key === key && y.kind === 'lwhy'); return (x && x.text) || ''; };
+// زر نعم / لا موحّد
+const ynSeg = (attr, on, label) => `<div class="cseg hrseg" role="group" aria-label="${label}"><button type="button" ${attr}="yes" class="${on ? 'on' : ''}">نعم</button><button type="button" ${attr}="no" class="${on ? '' : 'on no'}">لا</button></div>`;
 function buildTotals(from, to) {
   const inR = (d) => (!from || d >= from) && (!to || d <= to);
   const map = new Map();
@@ -2628,11 +2640,11 @@ function renderAbs(A, c, byT) {
     + kpi('الأكثر غياباً في الفترة', top ? esc(top.n) : '—', top ? daysTxt(top.v) : '');
   $('#dist').innerHTML = distBar([['k-exc', 'بعذر', c.exc], ['k-unx', 'بدون عذر', c.unx], ['k-unc', 'لم يُدخل عذر', c.unc]]);
   $('#lf-chips').innerHTML = chips([['', 'الكل', c.all], ['__unc', 'لم يُدخل عذر', c.unc], ['بعذر', 'بعذر', c.exc], ['بدون عذر', 'بدون عذر', c.unx]], LF.cls);
-  $('#tb-hint').textContent = LF.view === 'table' ? 'التصنيف يُحفظ فوراً بمجرد الضغط · اختيار سبب إجازة يجعل الغياب «بعذر» تلقائياً · الرفع في فارس يُحدَّد من التصنيف: الرفع في فارس = صدور قرار الحسم (✓ في الإجراءات) · سبب عدم الرفع: العذر أو نوع الاستئذان أو «لم يصدر قرار الحسم بعد» · الغياب بدون عذر أو بعد 5 أيام بلا عذر يتحول إلى حسم · سبب عدم الرفع يُحفظ عند الخروج من الحقل' : '';
+  $('#tb-hint').textContent = LF.view === 'table' ? 'التصنيف يُحفظ فوراً بمجرد الضغط · اختيار سبب إجازة يجعل الغياب «بعذر» تلقائياً · الغياب بدون عذر أو بعد 5 أيام بلا عذر يتحول إلى حسم · الرفع في فارس والموارد البشرية في تبويب الإجراءات' : '';
   if (LF.view === 'table') {
     const rows = A.filter((r) => byT(r) && (LF.cls === '' || (LF.cls === '__unc' ? !r.cls : r.cls === LF.cls))).sort((a, b) => b.date.localeCompare(a.date));
     const allOn = rows.length && rows.every((r) => SEL.has(r.id));
-    $('#lt').innerHTML = rows.length ? `<thead><tr><th class="ck"><input type="checkbox" id="sel-all" aria-label="تحديد الكل"${allOn ? ' checked' : ''}></th><th>اليوم</th><th>الموظف</th><th>التصنيف</th><th>السبب</th><th>الرفع في فارس</th><th>سبب عدم الرفع</th><th>الاستئذان</th><th>المساءلة</th></tr></thead><tbody>${rows.map((r) => {
+    $('#lt').innerHTML = rows.length ? `<thead><tr><th class="ck"><input type="checkbox" id="sel-all" aria-label="تحديد الكل"${allOn ? ' checked' : ''}></th><th>اليوم</th><th>الموظف</th><th>التصنيف</th><th>السبب</th><th>الاستئذان</th><th>المساءلة</th></tr></thead><tbody>${rows.map((r) => {
       const pending = !r.cls;
       const list = r.reason && !ABS_REASONS.includes(r.reason) ? [r.reason, ...ABS_REASONS] : ABS_REASONS;
       return `<tr data-id="${r.id}" class="${pending ? 'pend' : r.cls === 'بعذر' ? 'exc' : 'unx'}">
@@ -2641,11 +2653,6 @@ function renderAbs(A, c, byT) {
         <td>${nameCell(r, pending ? '<span class="ptag">لم يُدخل عذر</span>' : '')}</td>
         <td><div class="cseg" role="group" aria-label="التصنيف"><button type="button" data-set="بعذر" class="${r.cls === 'بعذر' ? 'on' : ''}">بعذر</button><button type="button" data-set="بدون عذر" class="${r.cls === 'بدون عذر' ? 'on' : ''}">بدون عذر</button></div></td>
         <td><select class="f-reason" aria-label="السبب">${['', ...list].map((x) => `<option value="${esc(x)}"${x === (r.reason || '') ? ' selected' : ''}>${esc(x) || '— بدون سبب —'}</option>`).join('')}</select></td>
-        ${(() => { const fs = farisOf(r); const left = ABS_GRACE - daysAgo(absRange(r)[1]);
-          return fs === 'yes' ? '<td><span class="st-pill ok">نعم</span><div class="fr-wait" style="color:#166534">صدر الحسم</div></td><td>—</td>'
-            : permOk(r) || r.cls === 'بعذر' ? `<td><span class="st-pill bad">لا</span></td><td><b class="fr-perm">${esc(farisWhyOf(r))}</b></td>`
-            : absIsDed(r) ? `<td><span class="st-pill bad">لا</span></td><td><input class="f-why" type="text" value="${esc(r.farisWhy || '')}" placeholder="${esc(farisWhyDef(r))}" aria-label="سبب عدم الرفع"></td>`
-            : `<td><span class="st-pill bad">لا</span></td><td><span class="fr-wait">بانتظار العذر — متبقٍ ${daysWord(Math.max(1, left))}</span></td>`; })()}
         <td>${permCell(r)}</td>
         <td>${mesCell()}</td></tr>`;
     }).join('')}</tbody>` : emptyRow(A.length);
@@ -2829,7 +2836,6 @@ $('#lt').addEventListener('change', (e) => {
   if (t.classList.contains('row-ck')) { if (t.checked) SEL.add(r.id); else SEL.delete(r.id); renderLog(); }
   else if (t.classList.contains('f-reason')) patchRec(r.id, { reason: t.value, cls: t.value ? 'بعذر' : r.cls });
   else if (t.classList.contains('f-note')) patchRec(r.id, { note: t.value.trim() });
-  else if (t.classList.contains('f-why')) patchRec(r.id, { farisWhy: t.value.trim() });
   else if (t.classList.contains('f-perm')) patchRec(r.id, { perm: t.value, ...(r.form === 'absence' && PERM_OK.includes(t.value) && !r.cls ? { cls: 'بعذر' } : {}) });
 });
 
@@ -2897,7 +2903,7 @@ function renderActions() {
     + kpi('مكتملو الإجراءات', complete, '', '', '#15803d')
     + kpi('أيام حسم لم تُرفع', toRaise, '', toRaise ? 'bad' : '', toRaise ? 'var(--bad)' : '') : '';
   if (absDue) $('#ac-kpis').innerHTML += kpi('أيام غياب تستحق الحسم', absDue, 'بدون عذر أو بلا عذر خلال 5 أيام', 'bad', 'var(--bad)');
-  $('#ac-table').innerHTML = P.length ? `<thead><tr><th>م</th><th>الاسم</th><th>مجموع التأخر (د)</th><th>مجموع الغياب (أيام)</th><th>الدرجة الحالية</th><th>مسار الإجراءات (١ ← ٨)</th><th>أيام الحسم</th><th>الرفع للموارد البشرية</th><th>الإجراء التالي</th><th></th></tr></thead><tbody>${P.map((e, i) => {
+  $('#ac-table').innerHTML = P.length ? `<thead><tr><th>م</th><th>الاسم</th><th>مجموع التأخر (د)</th><th>مجموع الغياب (أيام)</th><th>الدرجة الحالية</th><th>مسار الإجراءات (١ ← ٨)</th><th>أيام الحسم</th><th>الرفع في فارس</th><th>سبب عدم الرفع</th><th>الرفع للموارد البشرية</th><th>الإجراء التالي</th><th></th></tr></thead><tbody>${P.map((e, i) => {
     const cur = e.cur != null ? TIERS[e.cur] : null;
     return `<tr data-key="${esc(e.key)}">
       <td class="num">${i + 1}</td>
@@ -2906,8 +2912,10 @@ function renderActions() {
       <td class="num ${e.absDays ? 'st-abs' : ''}">${e.absDays}</td>
       <td>${cur ? `<span class="step-badge"><b>${e.cur + 1}</b><span>${esc(cur.act)}<small>${esc(STEP_TH[e.cur])}</small></span></span>` : '—'}</td>
       <td>${ladderHTML(e)}</td>
-      <td class="ded-cell">${e.lateDed ? daysWord(e.lateDed) : '—'}${e.lateDed ? (e.lateRaise ? `<small class="bad">للرفع: ${e.lateRaise}</small><button type="button" class="btn" data-raise="late" style="min-height:30px;font-size:12px;padding:2px 8px;margin-top:3px">تم الرفع</button>` : '<small class="ok">رُفعت ✔</small>') : ''}</td>
-      <td>${(() => { const on = hrFlag(e.key); return `<div class="cseg hrseg" role="group" aria-label="الرفع للموارد البشرية"><button type="button" data-hr="yes" class="${on ? 'on' : ''}">نعم</button><button type="button" data-hr="no" class="${on ? '' : 'on no'}">لا</button></div>`; })()}</td>
+      <td class="ded-cell">${e.lateDed ? daysWord(e.lateDed) : '—'}</td>
+      <td>${e.lateDed ? `${ynSeg('data-faris', !e.lateRaise, 'الرفع في فارس')}${e.lateRaise && e.lateRaise < e.lateDed ? `<small class="hint" style="display:block;margin:2px 0 0">رُفع ${e.lateDed - e.lateRaise} من ${e.lateDed}</small>` : ''}` : '<span class="hint" style="margin:0">لم يبلغ ٤٢٠ د</span>'}</td>
+      <td>${e.lateDed && e.lateRaise ? `<input class="f-why f-lwhy" type="text" value="${esc(lateWhy(e.key))}" placeholder="لم يُرفع حسم التأخر بعد" aria-label="سبب عدم الرفع">` : '—'}</td>
+      <td>${ynSeg('data-hr', hrFlag(e.key), 'الرفع للموارد البشرية')}</td>
       <td>${e.due != null ? `<button type="button" class="nx" data-next="${e.due}">تنفيذ (${e.due + 1}) ${esc(TIERS[e.due].act)}</button>${e.pendingCount > 1 ? `<small class="hint" style="display:block;margin:3px 0 0">ثم ${e.pendingCount - 1} إجراء آخر مستحق</small>` : ''}` : '<span class="nx-done">مكتمل ✔</span>'}</td>
       <td><div class="acts"><button type="button" class="btn warn" data-act="form">النموذج والمساءلة</button>${e.lateDed ? '<button type="button" class="btn" data-act="deduct">قرار الحسم</button>' : ''}</div></td>
     </tr>`;
@@ -2935,6 +2943,7 @@ function renderActions() {
   }).join('')}</tbody>` : '<tbody><tr><td class="empty-log">لا يوجد غياب بدون عذر أو غياب تجاوز 5 أيام دون عذر في هذه الفترة.</td></tr></tbody>';
   $('#ac-abs-lg').hidden = !AB.length;
   renderAbsLadder();
+  renderAbsFaris();
 
   const E = list.filter((e) => e.depN);
   $('#ac-early').innerHTML = E.length ? `<thead><tr><th>م</th><th>الاسم</th><th>مجموع الانصراف المبكر</th><th>مرات</th><th>أيام الحسم</th><th>الباقي للحسم التالي</th><th></th></tr></thead><tbody>${E.map((e, i) => `<tr data-key="${esc(e.key)}">
@@ -2998,7 +3007,6 @@ const ABS_GRACE = 5;
 // الرفع في نظام فارس: الغياب بعذر = رُفع، بدون عذر أو مضت 5 أيام بلا عذر = لم يُرفع (ويتحول إلى حسم)
 // الرفع في فارس = صدور قرار الحسم لذلك اليوم (نعم)، وإلا (لا)
 const dedDay = (r, iso) => !!(r.dedDone || (r.dedOn && r.dedOn[iso]));
-function farisOf(r) { const ds = recDates(r); return ds.length && ds.every((d) => dedDay(r, d)) ? 'yes' : 'no'; }
 // سبب عدم الرفع في فارس
 function farisWhyOf(r) {
   if (permOk(r)) return permWhy(r);
@@ -3091,6 +3099,35 @@ $('#ac-abs').addEventListener('click', async (ev) => {
     markDed(days.map((x) => [x.rid, x.iso]), todayISO());
     saveLog(); updateBadge(); renderActions(); toast('سُجّل حسم الغياب');
   }
+});
+function renderAbsFaris() {
+  const rows = LOG.filter((r) => r.form === 'absence' && (!AC.emp || r.key === AC.emp) && (() => { const [a, z] = absRange(r); return (!AC.from || z >= AC.from) && (!AC.to || a <= AC.to); })())
+    .sort((a, b) => b.date.localeCompare(a.date));
+  $('#ac-fa').innerHTML = rows.length ? `<thead><tr><th>م</th><th>الاسم</th><th>اليوم والتاريخ</th><th>التصنيف</th><th>الرفع في فارس</th><th>سبب عدم الرفع</th><th>الرفع للموارد البشرية</th></tr></thead><tbody>${rows.map((r, i) => {
+    const ds = recDates(r); const nd = ds.filter((d) => dedDay(r, d)).length;
+    const cls = permOk(r) ? `<span class="st-pill ok">${esc(permWhy(r))}</span>` : r.cls === 'بعذر' ? '<span class="st-pill ok">بعذر</span>' : r.cls === 'بدون عذر' ? '<span class="st-pill bad">بدون عذر</span>' : '<span class="st-pill wait">لم يُدخل عذر</span>';
+    const left = ABS_GRACE - daysAgo(absRange(r)[1]);
+    const fa = nd && nd === ds.length ? '<span class="st-pill ok">نعم</span><div class="fr-wait" style="color:#166534">صدر الحسم</div>'
+      : nd ? `<span class="st-pill wait">جزئياً</span><div class="fr-wait">حُسم ${nd} من ${ds.length}</div>` : '<span class="st-pill bad">لا</span>';
+    const why = nd === ds.length ? '—'
+      : permOk(r) || r.cls === 'بعذر' ? `<b class="fr-perm">${esc(farisWhyOf(r))}</b>`
+      : absIsDed(r) ? `<input class="f-why" type="text" value="${esc(r.farisWhy || '')}" placeholder="${esc(farisWhyDef(r))}" aria-label="سبب عدم الرفع">`
+      : `<span class="fr-wait">بانتظار العذر — متبقٍ ${daysWord(Math.max(1, left))}</span>`;
+    return `<tr data-fid="${esc(r.id)}"><td class="num">${i + 1}</td><td>${nameCell(r)}</td><td>${dayCell(r)}</td><td>${cls}</td><td>${fa}</td><td>${why}</td><td>${ynSeg('data-ahr', !!r.hrUp, 'الرفع للموارد البشرية')}</td></tr>`;
+  }).join('')}</tbody>` : '<tbody><tr><td class="empty-log">لا يوجد غياب في هذه الفترة.</td></tr></tbody>';
+}
+$('#ac-fa').addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-ahr]'); if (!b) return;
+  const r = LOG.find((x) => x.id === b.closest('tr[data-fid]').dataset.fid); if (!r) return;
+  const on = b.dataset.ahr === 'yes'; if (!!r.hrUp === on) return;
+  if (on) r.hrUp = true; else delete r.hrUp;
+  r.updated = Date.now(); saveLog(); renderActions();
+  toast(on ? 'سُجّل الرفع للموارد البشرية' : 'أُلغي الرفع للموارد البشرية');
+});
+$('#ac-fa').addEventListener('change', (ev) => {
+  const t = ev.target; if (!t.classList.contains('f-why')) return;
+  const r = LOG.find((x) => x.id === t.closest('tr[data-fid]').dataset.fid); if (!r) return;
+  r.farisWhy = t.value.trim(); r.updated = Date.now(); saveLog(); toast('حُفظ سبب عدم الرفع');
 });
 function absLadderList() {
   const inR = (d) => (!AC.from || d >= AC.from) && (!AC.to || d <= AC.to);
@@ -3230,6 +3267,21 @@ async function acClick(ev) {
     if (hb.dataset.hr === 'yes') RAISED.push({ id: uid(), key: e.key, kind: 'hr', days: 0, date: todayISO() });
     saveLog(); renderActions(); toast(hb.dataset.hr === 'yes' ? 'سُجّل الرفع للموارد البشرية' : 'أُلغي الرفع للموارد البشرية'); return;
   }
+  const fb = ev.target.closest('[data-faris]');
+  if (fb) {
+    const inR = (d) => (!AC.from || d >= AC.from) && (!AC.to || d <= AC.to);
+    if (fb.dataset.faris === 'yes') {
+      if (!e.lateRaise) return;
+      RAISED.push({ id: uid(), key: e.key, kind: 'late', days: e.lateRaise, date: todayISO() });
+      RAISED = RAISED.filter((x) => !(x.key === e.key && x.kind === 'lwhy'));
+      toast(`سُجّل رفع ${daysWord(e.lateRaise)} حسم تأخر في فارس`);
+    } else {
+      if (e.lateRaise === e.lateDed) return;
+      RAISED = RAISED.filter((x) => !(x.key === e.key && x.kind === 'late' && inR(x.date)));
+      toast('أُلغي رفع حسم التأخر في فارس');
+    }
+    saveLog(); renderActions(); return;
+  }
   const rs = ev.target.closest('[data-raise]');
   if (rs) {
     const kind = rs.dataset.raise; const days = kind === 'late' ? e.lateRaise : e.depRaise;
@@ -3242,6 +3294,14 @@ async function acClick(ev) {
   else if (a.dataset.act === 'deduct-dep') openDeductFor(e, e.dep);
 }
 $('#ac-table').addEventListener('click', acClick);
+$('#ac-table').addEventListener('change', (ev) => {
+  const t = ev.target; if (!t.classList.contains('f-lwhy')) return;
+  const tr = t.closest('tr[data-key]'); if (!tr) return;
+  const key = tr.dataset.key; const txt = t.value.trim();
+  RAISED = RAISED.filter((x) => !(x.key === key && x.kind === 'lwhy'));
+  if (txt) RAISED.push({ id: uid(), key, kind: 'lwhy', days: 0, date: todayISO(), text: txt });
+  saveLog(); toast('حُفظ سبب عدم الرفع');
+});
 $('#ac-early').addEventListener('click', acClick);
 $('#ac-from').addEventListener('input', (e) => { AC.from = e.target.value; AC.preset = ''; renderActions(); });
 $('#ac-to').addEventListener('input', (e) => { AC.to = e.target.value; AC.preset = ''; renderActions(); });
@@ -3501,7 +3561,7 @@ function absStatRows(from, to) {
         act: done || absIsDed(r) ? 'حسم' : 'مساءلة غياب',
         faris: done ? 'نعم' : 'لا',
         why: done ? '' : farisWhyOf(r),
-        late: '', hr: '', notes: '', n: 1,
+        late: '', hr: r.hrUp ? 'نعم' : 'لا', notes: '', n: 1,
       });
     });
   });
@@ -3514,7 +3574,7 @@ function absStatRows(from, to) {
     if (t.lateDed < 1) return;
     const tn = now.get(t.key); if (tn) t.lateRaise = Math.max(0, t.lateDed - (tn.lateDed - tn.lateRaise));
     const raised = t.lateDed - t.lateRaise;
-    late.push({ name: (t.emp && t.emp.name) || t.key, civil: (t.emp && t.emp.civil) || '', dates: '', act: 'حسم تأخر', faris: t.lateRaise ? 'لا' : 'نعم', why: t.lateRaise ? 'لم يُرفع حسم التأخر بعد' : '', late: t.late,
+    late.push({ name: (t.emp && t.emp.name) || t.key, civil: (t.emp && t.emp.civil) || '', dates: '', act: 'حسم تأخر', faris: t.lateRaise ? 'لا' : 'نعم', why: t.lateRaise ? lateWhy(t.key) || 'لم يُرفع حسم التأخر بعد' : '', late: t.late,
       hr: hrFlag(t.key) ? 'نعم' : 'لا', notes: `تأخر — ${daysWord(t.lateDed)} حسم${t.lateRaise && raised ? ` (رُفع ${daysWord(raised)})` : ''}`, n: 0 });
   });
   late.sort((x, y) => y.late - x.late);
@@ -4418,10 +4478,22 @@ function screen(html) { lock(); body().innerHTML = html; }
 
 // ---- الدخول باسم المستخدم: يُحوَّل داخلياً إلى معرّف بصيغة بريد (لا تُرسل أي رسائل) ----
 const USER_DOMAIN = 'users.namathej.app';
+const toDigits = (x) => String(x || '').replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g, '');
 const normUser = (u) => String(u || '').trim().toLowerCase();
 const validUser = (u) => /^[a-z0-9][a-z0-9._-]{2,29}$/.test(u);
 const toEmail = (u) => `${normUser(u)}@${USER_DOMAIN}`;
 const userName = (user) => (user && ((user.user_metadata && user.user_metadata.username) || String(user.email || '').split('@')[0])) || '';
+// كلمة المرور 4 خانات على الأقل: يُضاف لها لاحق ثابت قبل إرسالها، لأن خادم الدخول يشترط 6 أحرف على الأقل
+const PW_MIN = 4;
+const PW_PAD = '#nmj.k26';
+const padPw = (p) => String(p) + PW_PAD;
+const pwRule = `كلمة المرور ${PW_MIN} خانات على الأقل.`;
+// دخول: الصيغة الجديدة أولاً ثم كلمة المرور كما هي (للحسابات القديمة وحساب المدير)
+async function signInPw(email, password) {
+  let r = await db.auth.signInWithPassword({ email, password: padPw(password) });
+  if (r.error && password.length >= 6 && /invalid|credentials/i.test(r.error.message || '')) r = await db.auth.signInWithPassword({ email, password });
+  return r;
+}
 const SUPPORT = '<a class="wa-link" href="https://wa.me/966554801019" target="_blank" rel="noopener" dir="ltr">@K4044S</a>';
 
 function showLogin(msg) {
@@ -4438,7 +4510,7 @@ function showLogin(msg) {
     if (!u || !password) { showErr('a-err', 'اكتب اسم المستخدم وكلمة المرور.'); return; }
     const email = u.includes('@') ? u : validUser(u) ? toEmail(u) : '';
     if (!email) { showErr('a-err', 'اسم المستخدم أو كلمة المرور غير صحيحة.'); return; }
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    const { data, error } = await signInPw(email, password);
     if (error) { showErr('a-err', authMsg(error)); return; }
     await enter(data.user);
   });
@@ -4454,9 +4526,12 @@ function showSignup() {
     <p class="g-sub">حساب واحد لكل مدرسة، يُستخدم من أي جهاز وتظهر عليه البيانات نفسها.</p>
     <p class="g-info">⏳ يبدأ الحساب <b>بفترة تجريبية مجانية لمدة شهر</b>، ويتعطّل تلقائياً بعد انتهائها. لتفعيل الاشتراك تواصل مع الدعم الفني ${SUPPORT}.</p>
     <div class="g-err" id="s-err"></div>
-    <label class="f">اسم المدرسة<input id="s-sc" placeholder="مثال: الثانوية السابعة"></label>
-    <label class="f">اسم المستخدم (بالإنجليزية: حروف وأرقام، 3 أحرف على الأقل)<input id="s-u" autocomplete="username" dir="ltr" autocapitalize="none" spellcheck="false" placeholder="salamah"></label>
-    <label class="f">كلمة المرور (8 أحرف على الأقل)<input id="s-p1" type="password" autocomplete="new-password" dir="ltr"></label>
+    <label class="f">اسم المدرسة *<input id="s-sc" placeholder="مثال: الثانوية السابعة" required></label>
+    <label class="f">اسم منشئ الحساب *<input id="s-cr" autocomplete="name" placeholder="الاسم الثلاثي" required></label>
+    <label class="f">رقم السجل المدني *<input id="s-cv" inputmode="numeric" dir="ltr" maxlength="10" placeholder="1xxxxxxxxx" autocomplete="off" required></label>
+    <label class="f">رقم الجوال *<input id="s-mb" type="tel" inputmode="numeric" dir="ltr" maxlength="10" placeholder="05xxxxxxxx" autocomplete="tel" required></label>
+    <label class="f">اسم المستخدم * (بالإنجليزية: حروف وأرقام، 3 أحرف على الأقل)<input id="s-u" autocomplete="username" dir="ltr" autocapitalize="none" spellcheck="false" placeholder="salamah" required></label>
+    <label class="f">كلمة المرور * (${PW_MIN} خانات على الأقل)<input id="s-p1" type="password" autocomplete="new-password" dir="ltr" required></label>
     <label class="f">تأكيد كلمة المرور<input id="s-p2" type="password" autocomplete="new-password" dir="ltr"></label>
     <button class="g-btn" id="s-go">إنشاء الحساب</button>
     <div class="g-links"><button class="g-link" id="s-back">لدي حساب — تسجيل الدخول</button></div>`);
@@ -4465,15 +4540,20 @@ function showSignup() {
     showErr('s-err');
     const school = $('#s-sc').value.trim().replace(/^مدرسة\s+/, ''); const u = normUser($('#s-u').value);
     const p1 = $('#s-p1').value; const p2 = $('#s-p2').value;
+    const creator = $('#s-cr').value.trim().replace(/\s+/g, ' ');
+    const civil = toDigits($('#s-cv').value); const mobile = toDigits($('#s-mb').value);
     if (!school) return showErr('s-err', 'اكتب اسم المدرسة.');
+    if (creator.split(' ').length < 2) return showErr('s-err', 'اكتب اسم منشئ الحساب (الاسم الثنائي على الأقل).');
+    if (!/^[12]\d{9}$/.test(civil)) return showErr('s-err', 'رقم السجل المدني 10 أرقام ويبدأ بـ 1 أو 2.');
+    if (!/^05\d{8}$/.test(mobile)) return showErr('s-err', 'رقم الجوال 10 أرقام ويبدأ بـ 05.');
     if (!validUser(u)) return showErr('s-err', 'اسم المستخدم بالإنجليزية من 3 إلى 30 حرفاً: حروف وأرقام والرموز . _ - فقط، ويبدأ بحرف أو رقم.');
-    if (p1.length < 8) return showErr('s-err', 'كلمة المرور 8 أحرف على الأقل.');
+    if (p1.length < PW_MIN) return showErr('s-err', pwRule);
     if (p1 !== p2) return showErr('s-err', 'كلمتا المرور غير متطابقتين.');
-    const { data, error } = await db.auth.signUp({ email: toEmail(u), password: p1, options: { data: { school, username: u } } });
+    const { data, error } = await db.auth.signUp({ email: toEmail(u), password: padPw(p1), options: { data: { school, username: u, creator, civil, mobile } } });
     if (error) return showErr('s-err', authMsg(error));
     if (data.session && data.user) { await enter(data.user); return; }
     // تسجيل مكرر يعيد مستخدماً بلا جلسة: نحاول الدخول مباشرة
-    const r = await db.auth.signInWithPassword({ email: toEmail(u), password: p1 });
+    const r = await signInPw(toEmail(u), p1);
     if (r.error) return showErr('s-err', 'اسم المستخدم هذا مستخدم مسبقاً. اختر اسماً آخر.');
     await enter(r.data.user);
   });
@@ -4489,16 +4569,16 @@ function showForgot() {
 function showNewPw(fromApp) {
   screen(`<h2>${fromApp ? 'تغيير كلمة المرور' : 'تعيين كلمة مرور جديدة'}</h2>
     <div class="g-err" id="n-err"></div>
-    <label class="f">كلمة المرور الجديدة (8 أحرف على الأقل)<input id="n-p1" type="password" autocomplete="new-password" dir="ltr"></label>
+    <label class="f">كلمة المرور الجديدة (${PW_MIN} خانات على الأقل)<input id="n-p1" type="password" autocomplete="new-password" dir="ltr"></label>
     <label class="f">تأكيدها<input id="n-p2" type="password" autocomplete="new-password" dir="ltr"></label>
     <button class="g-btn" id="n-go">حفظ كلمة المرور</button>
     ${fromApp ? '<div class="g-links"><button class="g-link" id="n-back">رجوع</button></div>' : ''}`);
   if (fromApp) $('#n-back').onclick = unlock;
   $('#n-go').onclick = () => busy($('#n-go'), async () => {
     const p1 = $('#n-p1').value; const p2 = $('#n-p2').value;
-    if (p1.length < 8) return showErr('n-err', 'كلمة المرور 8 أحرف على الأقل.');
+    if (p1.length < PW_MIN) return showErr('n-err', pwRule);
     if (p1 !== p2) return showErr('n-err', 'كلمتا المرور غير متطابقتين.');
-    const { data, error } = await db.auth.updateUser({ password: p1 });
+    const { data, error } = await db.auth.updateUser({ password: padPw(p1) });
     if (error) return showErr('n-err', authMsg(error));
     if (fromApp) { unlock(); if (window.HF && window.HF.toast) window.HF.toast('تم تغيير كلمة المرور'); return; }
     await enter(data.user);
@@ -4541,7 +4621,7 @@ function authMsg(e) {
   if (/Email not confirmed/i.test(m)) return 'الحساب بانتظار التفعيل. تواصل مع الدعم الفني.';
   if (/already registered|already been registered|User already/i.test(m)) return 'اسم المستخدم هذا مستخدم مسبقاً. اختر اسماً آخر.';
   if (/rate limit|too many/i.test(m)) return 'محاولات كثيرة. انتظر قليلاً ثم حاول مرة أخرى.';
-  if (/Password should/i.test(m)) return 'كلمة المرور ضعيفة. استخدم 8 أحرف على الأقل.';
+  if (/Password should/i.test(m)) return 'كلمة المرور ضعيفة. ' + pwRule;
   if (/same.*password|different from the old/i.test(m)) return 'كلمة المرور الجديدة يجب أن تختلف عن السابقة.';
   if (/Failed to fetch|NetworkError|network/i.test(m)) return 'لا يوجد اتصال بالإنترنت.';
   return m || 'حدث خطأ غير متوقع.';
@@ -4628,7 +4708,7 @@ async function showAdmin() {
   $('#g-card').classList.add('wide');
   screen(`<div class="ad-top">
       <div><h2>حسابات المدارس</h2><p class="g-sub" style="margin:0">مدير النظام: <b dir="ltr">${esc(C.user.email)}</b></p></div>
-      <div class="ad-tools"><input id="ad-q" placeholder="بحث بالمدرسة أو اسم المستخدم"><button class="btn" id="ad-ref">تحديث</button><button class="btn ac-out" id="ad-out">تسجيل الخروج</button></div>
+      <div class="ad-tools"><input id="ad-q" placeholder="بحث بالمدرسة أو اسم المستخدم أو المنشئ أو الجوال"><button class="btn" id="ad-ref">تحديث</button><button class="btn ac-out" id="ad-out">تسجيل الخروج</button></div>
     </div>
     <div class="ad-chips" id="ad-chips"></div>
     <div class="g-err" id="ad-msg"></div>
@@ -4650,13 +4730,13 @@ function adRender() {
   const F = [['all', 'الكل'], ['on', 'مفعّل'], ['trial', 'تجريبي'], ['expired', 'منتهي'], ['disabled', 'معطّل']];
   $('#ad-chips').innerHTML = F.map(([k, l]) => `<button type="button" data-f="${k}" class="${AD.f === k ? 'on' : ''}">${l} <b>${cnt[k]}</b></button>`).join('');
   const rows = AD.rows.filter((r) => (AD.f === 'all' || adStatus(r)[0] === AD.f)
-    && (!AD.q || String(r.school || '').toLowerCase().includes(AD.q) || String(r.username || '').toLowerCase().includes(AD.q)));
+    && (!AD.q || String(r.school || '').toLowerCase().includes(AD.q) || String(r.username || '').toLowerCase().includes(AD.q) || String(r.creator || '').toLowerCase().includes(AD.q) || String(r.mobile || '').includes(AD.q) || String(r.civil || '').includes(AD.q)));
   $('#ad-body').innerHTML = rows.length ? rows.map((r) => {
     const [k, l] = adStatus(r);
     const n = daysLeft(r.expires_at);
     const left = r.expires_at == null ? 'بلا نهاية' : n >= 0 ? `متبقٍ ${daysTxt(n)}` : `انتهى منذ ${daysTxt(-n)}`;
     return `<tr data-uid="${esc(r.user_id)}">
-      <td><b>${esc(r.school || '—')}</b><div class="ad-u" dir="ltr">${esc(r.username)}</div></td>
+      <td><b>${esc(r.school || '—')}</b><div class="ad-u" dir="ltr">${esc(r.username)}</div>${r.creator || r.mobile || r.civil ? `<div class="ad-who">${esc(r.creator || '')}${r.mobile ? ` · <a href="https://wa.me/966${esc(String(r.mobile).replace(/^0/, ''))}" target="_blank" rel="noopener" dir="ltr">${esc(r.mobile)}</a>` : ''}${r.civil ? ` · <span dir="ltr">${esc(r.civil)}</span>` : ''}</div>` : ''}</td>
       <td>${dmyD(r.created_at)}</td>
       <td>${r.last_sign_in_at ? dmyD(r.last_sign_in_at) : '—'}</td>
       <td class="ad-n">${Number(r.employees) || 0} موظف<br>${Number(r.logs) || 0} سجل</td>
@@ -4693,13 +4773,13 @@ function adAction(e) {
     m.querySelector('.ad-quick').addEventListener('click', (ev) => { const q = ev.target.closest('[data-d]'); if (!q) return; m.querySelector('#ad-date').value = addMonths(base, Number(q.dataset.d)); m.querySelector('#ad-none').checked = false; });
     m.querySelector('#ad-date').addEventListener('input', () => { m.querySelector('#ad-none').checked = false; });
   } else if (b.dataset.a === 'pw') {
-    const gen = () => { const c = 'abcdefghjkmnpqrstuvwxyz23456789'; const a = crypto.getRandomValues(new Uint8Array(10)); return [...a].map((x) => c[x % c.length]).join(''); };
+    const gen = () => { const c = 'abcdefghjkmnpqrstuvwxyz23456789'; const a = crypto.getRandomValues(new Uint8Array(6)); return [...a].map((x) => c[x % c.length]).join(''); };
     const m = adModal('كلمة مرور جديدة', `<p>تعيين كلمة مرور جديدة لحساب ${who}. أرسلها للمدرسة بعد الحفظ.</p>
       <label class="f">كلمة المرور الجديدة<input id="ad-pw" dir="ltr" autocomplete="off" value="${gen()}"></label>
       <div class="g-links" style="margin-top:0"><button type="button" class="g-link" id="ad-gen">توليد كلمة أخرى</button></div>`, 'حفظ كلمة المرور', async (box) => {
       const p = box.querySelector('#ad-pw').value.trim();
-      if (p.length < 8) throw new Error('كلمة المرور 8 أحرف على الأقل.');
-      await adRpc('admin_set_password', { p_uid: r.user_id, p_password: p });
+      if (p.length < PW_MIN) throw new Error(pwRule);
+      await adRpc('admin_set_password', { p_uid: r.user_id, p_password: padPw(p) });
       box.querySelector('.ad-body').innerHTML = `<p class="g-ok" style="display:block">تم الحفظ. بيانات الدخول للمدرسة:</p><div class="ad-cred" dir="ltr">اسم المستخدم: ${esc(r.username)}<br>كلمة المرور: ${esc(p)}</div>`;
       box.querySelector('#ad-ok').remove(); box.querySelector('#ad-x').textContent = 'إغلاق';
       return true;

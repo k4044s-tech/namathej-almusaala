@@ -1,6 +1,6 @@
 // نماذج المساءلة — عامل الخدمة: تشغيل بدون إنترنت
 // غيّر الرقم عند تعديل الأيقونات أو ملف manifest (الصفحة نفسها تتحدث تلقائياً)
-const VERSION = 'v47';
+const VERSION = 'v49';
 const CACHE = 'hf-' + VERSION;
 const CORE = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/og-image.png'];
 
